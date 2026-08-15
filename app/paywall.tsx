@@ -1,14 +1,14 @@
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Alert, Linking, Pressable, StyleSheet, View } from 'react-native';
 
 import { AppButton, AppText, Screen } from '@/components/ui';
 import { PRIVACY_URL, TERMS_URL } from '@/constants/app';
 import { PREMIUM_BENEFITS, PRICING_PLANS, type PricingPlan } from '@/constants/pricing';
 import { colors, radius, spacing } from '@/constants/theme';
-import { paymentService } from '@/services/payments';
+import { paymentService, type StorePrice } from '@/services/payments';
 import { useUserStore } from '@/store/useUserStore';
 
 export default function PaywallScreen() {
@@ -19,6 +19,29 @@ export default function PaywallScreen() {
     PRICING_PLANS.find((plan) => plan.highlighted) ?? PRICING_PLANS[0],
   );
   const [busy, setBusy] = useState(false);
+  const [restoring, setRestoring] = useState(false);
+  const [storePrices, setStorePrices] = useState<Record<string, StorePrice>>({});
+
+  // Show the store's own localised price when billing is live, so a learner in
+  // Seoul sees ₩ rather than the USD placeholder from the config.
+  useEffect(() => {
+    let cancelled = false;
+
+    void (async () => {
+      const prices = await paymentService.getPrices();
+      if (cancelled || prices.length === 0) return;
+      setStorePrices(Object.fromEntries(prices.map((price) => [price.productId, price])));
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const priceLabelFor = useCallback(
+    (plan: PricingPlan) => storePrices[plan.productId]?.displayPrice ?? plan.priceLabel,
+    [storePrices],
+  );
 
   const handlePurchase = async () => {
     setBusy(true);
@@ -27,7 +50,18 @@ export default function PaywallScreen() {
 
     if (result.status === 'purchased' && result.subscription) {
       setSubscription(result.subscription);
-      router.back();
+      Alert.alert('Premium', result.message, [{ text: 'Start learning', onPress: () => router.back() }]);
+      return;
+    }
+
+    // A cancelled purchase is a deliberate choice, not an error worth a dialog.
+    if (result.status === 'cancelled') return;
+
+    if (result.status === 'pending') {
+      Alert.alert(
+        'Payment pending',
+        'Your payment is still processing. Premium unlocks as soon as it clears.',
+      );
       return;
     }
 
@@ -35,10 +69,13 @@ export default function PaywallScreen() {
   };
 
   const handleRestore = async () => {
+    setRestoring(true);
     const result = await paymentService.restore();
+    setRestoring(false);
+
     if (result.status === 'purchased' && result.subscription) {
       setSubscription(result.subscription);
-      router.back();
+      Alert.alert('Restored', result.message, [{ text: 'OK', onPress: () => router.back() }]);
       return;
     }
     Alert.alert('Restore Purchases', result.message);
@@ -56,14 +93,21 @@ export default function PaywallScreen() {
           />
           <AppText variant="micro" color={colors.textSubtle} center>
             {selected.trialDays > 0
-              ? `${selected.trialDays} days free, then ${selected.priceLabel} ${selected.periodLabel}. Cancel anytime.`
+              ? `${selected.trialDays} days free, then ${priceLabelFor(selected)} ${selected.periodLabel}. Cancel anytime.`
               : 'One payment. Yours forever.'}
           </AppText>
 
           <View style={styles.legalRow}>
-            <Pressable onPress={handleRestore} accessibilityRole="button" hitSlop={8}>
+            <Pressable
+              onPress={handleRestore}
+              disabled={restoring}
+              accessibilityRole="button"
+              accessibilityLabel="Restore previous purchases"
+              accessibilityState={{ disabled: restoring, busy: restoring }}
+              hitSlop={8}
+            >
               <AppText variant="micro" color={colors.textMuted}>
-                Restore Purchases
+                {restoring ? 'Restoring…' : 'Restore Purchases'}
               </AppText>
             </Pressable>
             <Pressable onPress={() => Linking.openURL(TERMS_URL)} accessibilityRole="link" hitSlop={8}>
@@ -161,7 +205,7 @@ export default function PaywallScreen() {
                     </AppText>
                   </View>
                 ) : null}
-                <AppText variant="bodyStrong">{plan.priceLabel}</AppText>
+                <AppText variant="bodyStrong">{priceLabelFor(plan)}</AppText>
                 <AppText variant="micro" color={colors.textSubtle}>
                   {plan.periodLabel}
                 </AppText>

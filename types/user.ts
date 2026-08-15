@@ -55,7 +55,12 @@ export interface DailyActivity {
 }
 
 export type SubscriptionPlan = 'free' | 'monthly' | 'yearly' | 'lifetime';
-export type SubscriptionStatus = 'active' | 'trialing' | 'expired' | 'cancelled';
+export type SubscriptionStatus =
+  | 'active'
+  | 'trialing'
+  | 'expired'
+  | 'cancelled'
+  | 'refunded';
 
 export interface Subscription {
   plan: SubscriptionPlan;

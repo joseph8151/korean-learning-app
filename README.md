@@ -22,6 +22,7 @@ release needs no rewrite.
 - [Testing on a real Android phone](#testing-on-a-real-android-phone)
 - [Production build](#production-build)
 - [Google Play preparation](#google-play-preparation)
+- [In-app purchases](#in-app-purchases)
 - [Replacing the placeholder branding](#replacing-the-placeholder-branding)
 - [Renaming the app](#renaming-the-app)
 - [Git workflow](#git-workflow)
@@ -46,7 +47,7 @@ residents in Korea, TOPIK starters. English-speaking users first.
 | Practice | Vocabulary flashcards, quick quiz, listening, speaking, grammar, review mistakes, saved words, AI Korean Partner |
 | Progress | Weekly chart, XP level, streak, lessons, words, speaking minutes, 8 achievements |
 | Profile | Level, daily goal, learning goals, notifications, account, legal links |
-| Premium | Full paywall with three plans behind a swappable payment service |
+| Premium | Google Play Billing with server-side receipt verification — see [docs/billing.md](docs/billing.md) |
 | Sync | Guest progress merges into the account on sign-in, then uploads after each lesson |
 
 **Guests can learn immediately.** No account is required to finish the first lesson —
@@ -95,11 +96,11 @@ features/               Feature-scoped components (lesson, quiz, auth, home)
 hooks/                  useAsyncData, usePremium, useStudyTimer, useSignInFlow,
                         useProfileSync, useDailyReminder
 lib/                    Pure logic — scoring, XP, streaks, progress, spaced review,
-                        progress merge
+                        progress merge, entitlement
 services/               Boundaries to the outside world
   content/              ContentSource: bundled + Supabase implementations
   ai/                   AIProvider: mock + remote (Edge Function) implementations
-  payments/             PaymentService interface (mock today)
+  payments/             PaymentService: Google Play + inert mock, receipt verification
   auth.ts  sync.ts  profile.ts  audio.ts  notifications.ts  search.ts
 store/                  Zustand stores (user, progress)
 types/                  Shared TypeScript types incl. the Supabase Database type
@@ -144,6 +145,10 @@ without them the app uses bundled content and the mock AI partner.
 | `EXPO_PUBLIC_SUPABASE_URL` | Cloud sync, accounts | Supabase → Project Settings → Data API |
 | `EXPO_PUBLIC_SUPABASE_ANON_KEY` | Cloud sync, accounts | Supabase → Project Settings → API Keys → `anon` |
 | `EXPO_PUBLIC_AI_PROXY_URL` | Live AI conversations | URL of your deployed `ai-chat` Edge Function |
+
+Billing needs no app-side variable. Its secrets (`GOOGLE_PLAY_SERVICE_ACCOUNT`,
+`ANDROID_PACKAGE_NAME`, `PLAY_RTDN_SECRET`) are Supabase secrets — see
+[docs/billing.md](docs/billing.md).
 
 ### Security rules for env vars
 
@@ -204,6 +209,7 @@ mock partner to live responses automatically — no code change.
 | `profiles`, `progress`, `vocabulary_progress`, `saved_words`, `user_streaks` | none | own rows only |
 | `subscriptions` | none | read own row only (writes are service-role only) |
 | `ai_usage` | none | read own row only (writes are service-role only) |
+| `purchases` | none | read own receipts only (writes are service-role only) |
 
 Content tables have no write policy at all, so the anon key cannot modify lessons.
 
@@ -308,10 +314,31 @@ Before the first release you still need to:
    point `eas.json` → `submit.production.android.serviceAccountKeyPath` at it. Keep the
    file out of git.
 7. **Upload to internal testing first**: `npm run submit:android`.
+8. **Set up in-app products and licence testers** — [docs/billing.md](docs/billing.md).
 8. Replace the placeholder icon, splash and feature graphic (see below).
 
 `app.config.ts` already declares `versionCode: 1`; EAS auto-increments it on
 production builds via `autoIncrement: true`.
+
+---
+
+## In-app purchases
+
+Billing is fully implemented: Google Play Billing on the device, receipt verification
+in a Supabase Edge Function, and Real-time Developer Notifications for renewals,
+cancellations and refunds.
+
+**It does not run in Expo Go** — billing needs the native module, so use a development
+client or a real APK/AAB. In Expo Go the paywall falls back to an inert mock that never
+grants Premium.
+
+The device can never grant itself Premium: `subscriptions` has no client write policy,
+so the only path to an entitlement is a purchase token that Google confirmed
+server-side.
+
+What still needs your accounts — Play Console products, a Google Cloud service account,
+Pub/Sub for notifications, licence testers — is written up step by step in
+**[docs/billing.md](docs/billing.md)**.
 
 ---
 

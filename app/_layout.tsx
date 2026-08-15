@@ -7,6 +7,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { colors } from '@/constants/theme';
 import { useDailyReminder } from '@/hooks/useDailyReminder';
+import { useEntitlementRefresh } from '@/hooks/useEntitlementRefresh';
 import { useProfileSync } from '@/hooks/useProfileSync';
 import { useProgressStore } from '@/store/useProgressStore';
 import { useUserStore } from '@/store/useUserStore';
@@ -20,6 +21,7 @@ export default function RootLayout() {
 
   useDailyReminder();
   useProfileSync();
+  useEntitlementRefresh();
 
   useEffect(() => {
     if (ready) {

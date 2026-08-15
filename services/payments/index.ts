@@ -1,42 +1,16 @@
-import type { PricingPlan } from '@/constants/pricing';
-import type { Subscription } from '@/types/user';
-
-export interface PurchaseResult {
-  status: 'purchased' | 'cancelled' | 'unavailable';
-  subscription: Subscription | null;
-  message: string;
-}
+import { googlePlayPaymentService } from './googlePlayPaymentService';
+import { mockPaymentService } from './mockPaymentService';
+import type { PaymentService } from './types';
 
 /**
- * Billing boundary. Swap `mockPaymentService` for a Google Play Billing or
- * RevenueCat implementation without touching a single screen.
+ * Real billing when the native module is present (a dev client or a store
+ * build), the inert mock everywhere else. `isAvailable` is evaluated at import
+ * time on purpose so screens can branch without another async hop.
  */
-export interface PaymentService {
-  readonly id: string;
-  readonly isAvailable: boolean;
-  purchase(plan: PricingPlan): Promise<PurchaseResult>;
-  restore(): Promise<PurchaseResult>;
-}
+export const paymentService: PaymentService = googlePlayPaymentService.isAvailable
+  ? googlePlayPaymentService
+  : mockPaymentService;
 
-export const mockPaymentService: PaymentService = {
-  id: 'mock',
-  isAvailable: false,
-
-  async purchase() {
-    return {
-      status: 'unavailable',
-      subscription: null,
-      message: 'Billing is not connected in this build yet. Coming with the Play Store release.',
-    };
-  },
-
-  async restore() {
-    return {
-      status: 'unavailable',
-      subscription: null,
-      message: 'Nothing to restore — billing is not connected in this build yet.',
-    };
-  },
-};
-
-export const paymentService: PaymentService = mockPaymentService;
+export { googlePlayPaymentService, mockPaymentService };
+export type { PaymentService, PurchaseResult, PurchaseStatus, StorePrice } from './types';
+export { verifyPurchase } from './receiptVerification';

@@ -25,7 +25,7 @@ read, so this is auditable in one file.
 
 ## 3. Is user data protected by RLS?
 
-**Yes.** Row Level Security is enabled on all 14 tables.
+**Yes.** Row Level Security is enabled on all 15 tables.
 
 - Content tables (`courses`, `units`, `lessons`, `lesson_content`, `vocabulary`,
   `quizzes`, `daily_phrases`) have a `select` policy for `anon` and `authenticated`
@@ -35,6 +35,9 @@ read, so this is auditable in one file.
   `user_streaks`) restrict every operation to `auth.uid() = user_id`.
 - `subscriptions` is **read-only even for its owner**. Only the service role can write
   it, so a user cannot grant themselves Premium by calling the API directly.
+- `purchases` is read-only to its owner: learners can see their receipt history for
+  support, but only the service role writes one. `purchase_token` is `unique`, so a
+  receipt can never be replayed to unlock a second account.
 - `ai_usage` is read-only to its owner for the same reason: a learner can see how many
   AI messages they have left but cannot reset the counter. `consume_ai_message()` is
   `security definer` with execute revoked from `public`, `anon` and `authenticated`,
@@ -63,6 +66,10 @@ functions.
   authenticated user cannot drain the model budget either.
 - Progress and profile sync send only the caller's own rows; RLS enforces that
   independently of what the client asks for.
+- Purchases are verified server-side against the Google Play Developer API before any
+  entitlement is written. The Play service-account key lives in Supabase secrets, never
+  in the app, and the RTDN webhook is authenticated by a constant-time-compared shared
+  secret.
 - Auth uses Supabase's PKCE OAuth flow through the system browser
   (`expo-web-browser`), not an in-app webview.
 

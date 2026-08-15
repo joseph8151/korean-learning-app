@@ -43,7 +43,13 @@ const config: ExpoConfig = {
       monochromeImage: './assets/android-icon-monochrome.png',
       backgroundColor: '#6C63FF',
     },
-    permissions: ['RECORD_AUDIO', 'VIBRATE', 'POST_NOTIFICATIONS'],
+    permissions: [
+      'RECORD_AUDIO',
+      'VIBRATE',
+      'POST_NOTIFICATIONS',
+      // Required by Google Play Billing.
+      'com.android.vending.BILLING',
+    ],
     blockedPermissions: ['ACCESS_FINE_LOCATION', 'ACCESS_COARSE_LOCATION'],
   },
 

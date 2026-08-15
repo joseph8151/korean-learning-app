@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 import { DEFAULT_DAILY_GOAL_MINUTES } from '@/constants/app';
+import { isEntitled } from '@/lib/entitlement';
 import { DEFAULT_NOTIFICATION_SETTINGS } from '@/services/notifications';
 import { STORAGE_KEYS, asyncStorage } from './storage';
 import type { KoreanLevel, LearningGoal, LevelKey } from '@/types/content';
@@ -122,5 +123,5 @@ export const useUserStore = create<UserState>()(
 );
 
 export function selectIsPremium(state: UserState): boolean {
-  return state.subscription.plan !== 'free' && ['active', 'trialing'].includes(state.subscription.status);
+  return isEntitled(state.subscription);
 }
