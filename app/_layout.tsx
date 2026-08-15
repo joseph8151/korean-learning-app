@@ -6,6 +6,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { colors } from '@/constants/theme';
+import { useDailyReminder } from '@/hooks/useDailyReminder';
 import { useProgressStore } from '@/store/useProgressStore';
 import { useUserStore } from '@/store/useUserStore';
 
@@ -15,6 +16,8 @@ export default function RootLayout() {
   const userHydrated = useUserStore((state) => state.hydrated);
   const progressHydrated = useProgressStore((state) => state.hydrated);
   const ready = userHydrated && progressHydrated;
+
+  useDailyReminder();
 
   useEffect(() => {
     if (ready) {
@@ -40,6 +43,7 @@ export default function RootLayout() {
           <Stack.Screen name="paywall" options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
           <Stack.Screen name="auth/sign-in" options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
           <Stack.Screen name="auth/sign-up" options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
+          <Stack.Screen name="+not-found" />
         </Stack>
       </SafeAreaProvider>
     </GestureHandlerRootView>

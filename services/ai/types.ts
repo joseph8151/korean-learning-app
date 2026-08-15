@@ -22,6 +22,13 @@ export interface ChatTurnResponse {
 }
 
 /**
+ * Thrown when the backend returned a message that is safe to show the learner
+ * verbatim — currently only the daily practice limit. Every other failure
+ * stays generic so internals never leak into the UI.
+ */
+export class AIUserFacingError extends Error {}
+
+/**
  * Implementations must never hold a model API key on the device. The remote
  * provider talks to a Supabase Edge Function (or any trusted backend) that
  * owns the secret.

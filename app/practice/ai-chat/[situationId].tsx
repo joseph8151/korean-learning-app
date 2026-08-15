@@ -17,7 +17,7 @@ import { AppText, EmptyState } from '@/components/ui';
 import { CHAT_SITUATIONS } from '@/constants/content';
 import { colors, layout, radius, spacing } from '@/constants/theme';
 import { audioService } from '@/services/audio';
-import { aiProvider, type ChatMessage } from '@/services/ai';
+import { AIUserFacingError, aiProvider, type ChatMessage } from '@/services/ai';
 import { useProgressStore } from '@/store/useProgressStore';
 
 export default function AIChatScreen() {
@@ -96,14 +96,19 @@ export default function AIChatScreen() {
       if (history.filter((message) => message.role === 'user').length >= 3) {
         recordConversationCompleted();
       }
-    } catch {
+    } catch (caught) {
+      const english =
+        caught instanceof AIUserFacingError
+          ? caught.message
+          : 'Something went wrong. Please try again.';
+
       setMessages((current) => [
         ...current,
         {
           id: `error-${Date.now()}`,
           role: 'assistant',
           korean: '',
-          english: 'Something went wrong. Please try again.',
+          english,
           romanization: '',
           suggestion: null,
         },

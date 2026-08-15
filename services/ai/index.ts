@@ -6,4 +6,5 @@ import type { AIProvider } from './types';
 export const aiProvider: AIProvider = isAiProxyConfigured ? remoteAIProvider : mockAIProvider;
 
 export { mockAIProvider, remoteAIProvider };
+export { AIUserFacingError } from './types';
 export type { AIProvider, ChatMessage, ChatTurnRequest, ChatTurnResponse } from './types';

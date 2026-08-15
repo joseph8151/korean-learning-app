@@ -1,6 +1,6 @@
 import { env } from '@/lib/env';
 import { getSupabase } from '@/lib/supabase';
-import type { AIProvider, ChatTurnRequest, ChatTurnResponse } from './types';
+import { AIUserFacingError, type AIProvider, type ChatTurnRequest, type ChatTurnResponse } from './types';
 
 /**
  * Talks to a trusted backend (Supabase Edge Function by default) that owns the
@@ -28,6 +28,13 @@ export const remoteAIProvider: AIProvider = {
       },
       body: JSON.stringify(request),
     });
+
+    if (response.status === 429) {
+      const body = (await response.json().catch(() => ({}))) as { error?: string };
+      throw new AIUserFacingError(
+        body.error ?? "You've reached today's practice limit. Come back tomorrow!",
+      );
+    }
 
     if (!response.ok) {
       throw new Error(`AI request failed with status ${response.status}`);

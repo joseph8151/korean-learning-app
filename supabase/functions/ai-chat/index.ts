@@ -22,6 +22,13 @@ import { createClient } from 'jsr:@supabase/supabase-js@2';
 const MODEL = 'claude-sonnet-5';
 const MAX_HISTORY = 20;
 
+/**
+ * Daily cap per learner. The counter is incremented atomically in Postgres by
+ * `consume_ai_message`, which only the service role may call, so a user cannot
+ * reset their own quota.
+ */
+const DAILY_MESSAGE_LIMIT = Number(Deno.env.get('AI_DAILY_MESSAGE_LIMIT') ?? '50');
+
 const SITUATION_BRIEFS: Record<string, string> = {
   cafe: 'You are a barista in a Seoul cafe taking a drink order.',
   restaurant: 'You are a server at a casual Korean restaurant.',
@@ -84,6 +91,34 @@ Deno.serve(async (request: Request) => {
 
   const { data: userData, error: userError } = await supabase.auth.getUser();
   if (userError || !userData.user) return json({ error: 'Unauthorized' }, 401);
+
+  // Rate limit before doing any paid work.
+  const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+  if (serviceRoleKey) {
+    const admin = createClient(Deno.env.get('SUPABASE_URL') ?? '', serviceRoleKey);
+    const { data: quota, error: quotaError } = await admin.rpc('consume_ai_message', {
+      p_user_id: userData.user.id,
+      p_limit: DAILY_MESSAGE_LIMIT,
+    });
+
+    if (quotaError) {
+      console.error('quota check failed', quotaError);
+      return json({ error: 'Something went wrong. Please try again.' }, 500);
+    }
+
+    const row = Array.isArray(quota) ? quota[0] : quota;
+    if (row && row.allowed === false) {
+      return json(
+        {
+          error: "You've reached today's practice limit. Come back tomorrow!",
+          remaining: 0,
+        },
+        429,
+      );
+    }
+  } else {
+    console.error('SUPABASE_SERVICE_ROLE_KEY is not set — AI requests are unmetered');
+  }
 
   let payload: { situationId?: string; history?: unknown[]; userText?: string };
   try {
