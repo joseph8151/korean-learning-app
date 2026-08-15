@@ -5,6 +5,8 @@ import { Animated, StyleSheet, View } from 'react-native';
 import { AppButton, AppText, Card, Screen } from '@/components/ui';
 import { ACHIEVEMENTS } from '@/constants/content';
 import { colors, radius, spacing } from '@/constants/theme';
+import { selectCompletedLessonCount, useProgressStore } from '@/store/useProgressStore';
+import { useUserStore } from '@/store/useUserStore';
 import type { AchievementId } from '@/types/user';
 
 export default function LessonCompleteScreen() {
@@ -29,6 +31,12 @@ export default function LessonCompleteScreen() {
     .split(',')
     .filter(Boolean) as AchievementId[];
   const unlocked = ACHIEVEMENTS.filter((achievement) => unlockedIds.includes(achievement.id));
+
+  // Nudge guests to sign up once they have progress worth keeping, rather
+  // than gating the app behind an account up front.
+  const isGuest = useUserStore((state) => state.isGuest);
+  const lessonsCompleted = useProgressStore(selectCompletedLessonCount);
+  const showSignUpPrompt = isGuest && lessonsCompleted >= 1;
 
   const [scale] = useState(() => new Animated.Value(0.85));
 
@@ -64,6 +72,22 @@ export default function LessonCompleteScreen() {
           <Stat label="Earned" value={`+${xp} XP`} tint={colors.secondarySoft} />
           <Stat label="Streak" value={`${streak} 🔥`} tint={colors.accentSoft} />
         </View>
+
+        {showSignUpPrompt ? (
+          <Card style={styles.signUp}>
+            <AppText variant="subheading">Keep this progress</AppText>
+            <AppText variant="caption" color={colors.textMuted}>
+              You&apos;re learning as a guest. Create a free account so your streak, XP
+              and saved words follow you to any device.
+            </AppText>
+            <AppButton
+              label="Create Free Account"
+              variant="outline"
+              style={styles.signUpButton}
+              onPress={() => router.push('/auth/sign-up')}
+            />
+          </Card>
+        ) : null}
 
         {unlocked.length > 0 ? (
           <Card style={styles.achievements}>
@@ -106,6 +130,8 @@ const styles = StyleSheet.create({
   emoji: { fontSize: 72, lineHeight: 84, textAlign: 'center' },
   stats: { flexDirection: 'row', gap: spacing.md, marginTop: spacing.xl },
   stat: { flex: 1, borderRadius: radius.md, paddingVertical: spacing.lg, gap: 2 },
+  signUp: { marginTop: spacing.lg, gap: spacing.sm },
+  signUpButton: { marginTop: spacing.md },
   achievements: { marginTop: spacing.lg, gap: spacing.lg },
   achievement: { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
   achievementText: { flex: 1, gap: 2 },

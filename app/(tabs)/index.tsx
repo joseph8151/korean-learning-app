@@ -160,6 +160,7 @@ export default function HomeScreen() {
           phrase={data.phrase}
           saved={savedPhraseIds.includes(data.phrase.id)}
           onToggleSave={() => toggleSavedPhrase(data.phrase.id)}
+          onSeeAll={() => router.push('/daily')}
         />
       </View>
 

@@ -9,16 +9,34 @@ export interface DailyKoreanCardProps {
   phrase: DailyPhrase;
   saved: boolean;
   onToggleSave: () => void;
+  onSeeAll?: () => void;
 }
 
-export function DailyKoreanCard({ phrase, saved, onToggleSave }: DailyKoreanCardProps) {
+export function DailyKoreanCard({ phrase, saved, onToggleSave, onSeeAll }: DailyKoreanCardProps) {
   return (
     <Card>
       <View style={styles.header}>
         <AppText variant="micro" color={colors.accent}>
           DAILY KOREAN
         </AppText>
-        <Tag label={phrase.category.toUpperCase()} backgroundColor={colors.accentSoft} color={colors.accent} />
+        {onSeeAll ? (
+          <Pressable
+            onPress={onSeeAll}
+            accessibilityRole="button"
+            accessibilityLabel="See all daily Korean phrases"
+            hitSlop={8}
+          >
+            <AppText variant="micro" color={colors.primary}>
+              See all →
+            </AppText>
+          </Pressable>
+        ) : (
+          <Tag
+            label={phrase.category.toUpperCase()}
+            backgroundColor={colors.accentSoft}
+            color={colors.accent}
+          />
+        )}
       </View>
 
       <AppText variant="korean" style={styles.korean}>
