@@ -10,6 +10,7 @@ const ANDROID_PACKAGE = 'com.koreango.app';
 const IOS_BUNDLE_ID = 'com.koreango.app';
 const SCHEME = 'koreango';
 const VERSION = '1.0.0';
+const EAS_ACCOUNT = 'joseph815s-team';
 
 /**
  * Links builds to the EAS project. A public identifier, not a secret, so it
@@ -22,6 +23,9 @@ const EAS_PROJECT_ID =
 const config: ExpoConfig = {
   name: APP_NAME,
   slug: SLUG,
+  // The EAS project lives under a team account, not a personal one. Without
+  // this, builds resolve the wrong owner and fail.
+  owner: EAS_ACCOUNT,
   scheme: SCHEME,
   version: VERSION,
   orientation: 'portrait',
