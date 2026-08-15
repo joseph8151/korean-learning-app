@@ -12,11 +12,24 @@ export const DEFAULT_NOTIFICATION_SETTINGS: NotificationSettings = {
 
 const DAILY_REMINDER_IDENTIFIER = 'koreango-daily-reminder';
 
+/**
+ * `Number('')` is 0, so blank segments have to be rejected explicitly — an
+ * empty setting would otherwise schedule a midnight reminder.
+ */
+function toNumber(part: string | undefined): number | null {
+  if (part === undefined || part.trim() === '') return null;
+  const value = Number(part);
+  return Number.isFinite(value) ? value : null;
+}
+
 export function parseTime(value: string): { hour: number; minute: number } {
-  const [hour, minute] = value.split(':').map(Number);
+  const [rawHour, rawMinute] = value.split(':');
+  const hour = toNumber(rawHour);
+  const minute = toNumber(rawMinute);
+
   return {
-    hour: Number.isFinite(hour) ? Math.min(23, Math.max(0, hour)) : 19,
-    minute: Number.isFinite(minute) ? Math.min(59, Math.max(0, minute)) : 0,
+    hour: hour === null ? 19 : Math.min(23, Math.max(0, Math.trunc(hour))),
+    minute: minute === null ? 0 : Math.min(59, Math.max(0, Math.trunc(minute))),
   };
 }
 

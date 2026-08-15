@@ -40,16 +40,18 @@ residents in Korea, TOPIK starters. English-speaking users first.
 | --- | --- |
 | Onboarding | 4 intro slides → learning goals → level → optional 15-question placement test → daily goal |
 | Home | Greeting, daily goal ring, today's lesson, Daily Korean phrase, streak, continue-learning |
-| Learn | 6 courses → 11 units → 20 lessons, progress per course, Hangul trainer, search |
+| Learn | 6 courses → 18 units → 30 lessons, progress per course, Hangul trainer, search |
 | Lesson | Introduction → vocabulary → expressions → listening → speaking → quiz → summary → completion screen with XP |
 | Quiz | Multiple choice (both directions), word matching, sentence ordering, fill in the blank, listening, true/false |
 | Practice | Vocabulary flashcards, quick quiz, listening, speaking, grammar, review mistakes, saved words, AI Korean Partner |
 | Progress | Weekly chart, XP level, streak, lessons, words, speaking minutes, 8 achievements |
 | Profile | Level, daily goal, learning goals, notifications, account, legal links |
 | Premium | Full paywall with three plans behind a swappable payment service |
+| Sync | Guest progress merges into the account on sign-in, then uploads after each lesson |
 
 **Guests can learn immediately.** No account is required to finish the first lesson —
-sign-up is offered later, once there is progress worth saving.
+sign-up is offered later, once there is progress worth saving. When a guest does sign
+up, their local progress is merged into the account rather than discarded.
 
 **The app is never empty and works offline.** All learning content is bundled with
 the app and served through a `ContentSource` interface. When Supabase credentials
@@ -90,13 +92,15 @@ app/                    Expo Router routes (each file is a screen)
 components/             Shared presentational components
   ui/                   Design-system primitives (AppText, AppButton, Screen, …)
 features/               Feature-scoped components (lesson, quiz, auth, home)
-hooks/                  useAsyncData, usePremium, useStudyTimer
-lib/                    Pure logic — scoring, XP, streaks, progress, spaced review
+hooks/                  useAsyncData, usePremium, useStudyTimer, useSignInFlow,
+                        useProfileSync, useDailyReminder
+lib/                    Pure logic — scoring, XP, streaks, progress, spaced review,
+                        progress merge
 services/               Boundaries to the outside world
   content/              ContentSource: bundled + Supabase implementations
   ai/                   AIProvider: mock + remote (Edge Function) implementations
   payments/             PaymentService interface (mock today)
-  auth.ts  audio.ts  notifications.ts  search.ts
+  auth.ts  sync.ts  profile.ts  audio.ts  notifications.ts  search.ts
 store/                  Zustand stores (user, progress)
 types/                  Shared TypeScript types incl. the Supabase Database type
 constants/              Theme tokens, app config, pricing, and all seed content
@@ -159,8 +163,8 @@ The app works without Supabase. Connect it when you want accounts and cross-devi
 
 **1. Create a project** at [supabase.com](https://supabase.com).
 
-**2. Apply the schema.** Either paste `supabase/migrations/20260101000000_initial_schema.sql`
-into the SQL Editor, or use the CLI:
+**2. Apply the schema.** Run the migrations in `supabase/migrations/` in filename
+order — paste them into the SQL Editor, or use the CLI:
 
 ```bash
 npm install -g supabase
@@ -185,6 +189,7 @@ supabase db reset                # local development only — destroys local dat
 
 ```bash
 supabase secrets set ANTHROPIC_API_KEY=sk-ant-...
+supabase secrets set AI_DAILY_MESSAGE_LIMIT=50
 supabase functions deploy ai-chat
 ```
 
@@ -198,8 +203,16 @@ mock partner to live responses automatically — no code change.
 | Content (courses, lessons, vocabulary, quizzes, daily phrases) | read | read |
 | `profiles`, `progress`, `vocabulary_progress`, `saved_words`, `user_streaks` | none | own rows only |
 | `subscriptions` | none | read own row only (writes are service-role only) |
+| `ai_usage` | none | read own row only (writes are service-role only) |
 
 Content tables have no write policy at all, so the anon key cannot modify lessons.
+
+### AI usage limits
+
+`ai-chat` requires a signed-in caller and consumes one message from a per-day
+counter, incremented atomically by `consume_ai_message()` — a service-role-only
+function, so a learner cannot reset their own quota. Set `AI_DAILY_MESSAGE_LIMIT`
+(default 50) with `supabase secrets set`.
 
 ---
 

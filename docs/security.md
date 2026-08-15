@@ -25,7 +25,7 @@ read, so this is auditable in one file.
 
 ## 3. Is user data protected by RLS?
 
-**Yes.** Row Level Security is enabled on all 13 tables.
+**Yes.** Row Level Security is enabled on all 14 tables.
 
 - Content tables (`courses`, `units`, `lessons`, `lesson_content`, `vocabulary`,
   `quizzes`, `daily_phrases`) have a `select` policy for `anon` and `authenticated`
@@ -35,6 +35,11 @@ read, so this is auditable in one file.
   `user_streaks`) restrict every operation to `auth.uid() = user_id`.
 - `subscriptions` is **read-only even for its owner**. Only the service role can write
   it, so a user cannot grant themselves Premium by calling the API directly.
+- `ai_usage` is read-only to its owner for the same reason: a learner can see how many
+  AI messages they have left but cannot reset the counter. `consume_ai_message()` is
+  `security definer` with execute revoked from `public`, `anon` and `authenticated`,
+  and increments in a single statement so two concurrent requests cannot both pass the
+  check on the same count.
 
 Policies use `(select auth.uid())` rather than `auth.uid()` so Postgres evaluates the
 call once per query instead of once per row.
@@ -54,6 +59,10 @@ functions.
   open proxy to a paid model quota.
 - Input to the function is bounded: message text is truncated to 500 characters and
   history to the last 20 turns.
+- Each learner has a daily message cap (`AI_DAILY_MESSAGE_LIMIT`, default 50), so an
+  authenticated user cannot drain the model budget either.
+- Progress and profile sync send only the caller's own rows; RLS enforces that
+  independently of what the client asks for.
 - Auth uses Supabase's PKCE OAuth flow through the system browser
   (`expo-web-browser`), not an in-app webview.
 
@@ -77,7 +86,6 @@ The Edge Function logs failures server-side and returns a generic message.
 - [ ] Publish a real privacy policy and set `PRIVACY_URL` in `constants/app.ts`.
 - [ ] Complete the Play Console Data Safety form (email + learning progress are
       collected for signed-in users; guests send nothing).
-- [ ] Add rate limiting to the `ai-chat` function before opening it to real traffic.
 - [ ] Store the Play service-account JSON outside the repo and reference it by path.
 - [ ] Confirm `npx expo config` shows no unexpected values in `extra`.
 

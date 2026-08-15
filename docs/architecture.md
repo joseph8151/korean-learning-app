@@ -53,8 +53,27 @@ Two Zustand stores, both persisted to AsyncStorage:
 computes XP, advances the streak, records the day's study time, and returns the
 achievements it unlocked, so the completion screen renders from a single return value.
 
-Guest progress lives on the device. Signing in does not currently upload it — that
-sync job is the first item in the next-version list.
+## Sync
+
+Guest progress lives on the device until the learner signs in. `syncOnSignIn` then
+pulls whatever the account has, merges the two snapshots and writes the result back.
+
+The merge (`lib/mergeProgress.ts`) is a pure function with two properties that make
+retries safe:
+
+- **Idempotent.** XP, study time and counters take the maximum rather than summing,
+  so merging the same snapshots twice changes nothing.
+- **Commutative.** Which side is "local" does not affect the outcome.
+
+Vocabulary mastery follows the most recent review rather than the higher value, so a
+word forgotten on a second device correctly drops back down.
+
+After that, progress uploads fire-and-forget when a lesson completes, and `Sync Now`
+in Profile re-runs the full merge. Every failure path keeps local progress and shows
+friendly copy — a failed sync is never destructive.
+
+Profile settings take a simpler path: `useProfileSync` watches the user store at the
+app root and pushes a debounced patch, so no settings screen knows a backend exists.
 
 ## Async UI contract
 
