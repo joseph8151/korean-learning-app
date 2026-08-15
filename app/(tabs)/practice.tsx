@@ -25,7 +25,7 @@ const ITEMS: PracticeItem[] = [
   { id: 'ai-chat', title: 'AI Korean Partner', description: 'Practise real situations by chat.', icon: 'chatbubbles', tint: colors.primarySoft, href: '/practice/ai-chat', premium: false },
   { id: 'grammar', title: 'Grammar', description: 'The patterns behind the sentences.', icon: 'construct', tint: colors.warningSoft, href: '/practice/grammar', premium: true },
   { id: 'review', title: 'Review Mistakes', description: 'Fix what you got wrong.', icon: 'refresh', tint: colors.accentSoft, href: '/practice/review', premium: false },
-  { id: 'saved', title: 'Saved Words', description: 'Everything you bookmarked.', icon: 'bookmark', tint: colors.successSoft, href: '/practice/saved', premium: false },
+  { id: 'saved', title: 'Saved', description: 'Words and phrases you bookmarked.', icon: 'bookmark', tint: colors.successSoft, href: '/practice/saved', premium: false },
 ];
 
 export default function PracticeScreen() {
@@ -33,11 +33,12 @@ export default function PracticeScreen() {
   const { isPremium, guard } = usePremiumGate();
 
   const mistakeCount = useProgressStore((state) => state.mistakeVocabularyIds.length);
-  const savedCount = useProgressStore((state) => state.savedWordIds.length);
+  const savedWordCount = useProgressStore((state) => state.savedWordIds.length);
+  const savedPhraseCount = useProgressStore((state) => state.savedPhraseIds.length);
 
   const countFor = (id: string) => {
     if (id === 'review') return mistakeCount;
-    if (id === 'saved') return savedCount;
+    if (id === 'saved') return savedWordCount + savedPhraseCount;
     return null;
   };
 

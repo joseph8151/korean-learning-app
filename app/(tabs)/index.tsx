@@ -40,8 +40,8 @@ export default function HomeScreen() {
 
   const lessons = useProgressStore((state) => state.lessons);
   const streak = useProgressStore((state) => state.streak);
-  const savedWordIds = useProgressStore((state) => state.savedWordIds);
-  const toggleSavedWord = useProgressStore((state) => state.toggleSavedWord);
+  const savedPhraseIds = useProgressStore((state) => state.savedPhraseIds);
+  const toggleSavedPhrase = useProgressStore((state) => state.toggleSavedPhrase);
   const todaySeconds = useProgressStore(selectTodaySeconds);
 
   const loader = useCallback(async (): Promise<HomeData> => {
@@ -158,8 +158,8 @@ export default function HomeScreen() {
       <View style={styles.section}>
         <DailyKoreanCard
           phrase={data.phrase}
-          saved={savedWordIds.includes(data.phrase.id)}
-          onToggleSave={() => toggleSavedWord(data.phrase.id)}
+          saved={savedPhraseIds.includes(data.phrase.id)}
+          onToggleSave={() => toggleSavedPhrase(data.phrase.id)}
         />
       </View>
 

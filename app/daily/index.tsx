@@ -27,8 +27,8 @@ export default function DailyKoreanScreen() {
   const router = useRouter();
   const [category, setCategory] = useState<DailyPhraseCategory | 'all'>('all');
 
-  const savedWordIds = useProgressStore((state) => state.savedWordIds);
-  const toggleSavedWord = useProgressStore((state) => state.toggleSavedWord);
+  const savedPhraseIds = useProgressStore((state) => state.savedPhraseIds);
+  const toggleSavedPhrase = useProgressStore((state) => state.toggleSavedPhrase);
 
   const loader = useCallback(async () => {
     const [today, all] = await Promise.all([
@@ -80,8 +80,8 @@ export default function DailyKoreanScreen() {
       <View style={styles.todayCard}>
         <DailyKoreanCard
           phrase={data.today}
-          saved={savedWordIds.includes(data.today.id)}
-          onToggleSave={() => toggleSavedWord(data.today.id)}
+          saved={savedPhraseIds.includes(data.today.id)}
+          onToggleSave={() => toggleSavedPhrase(data.today.id)}
         />
       </View>
 
@@ -129,19 +129,19 @@ export default function DailyKoreanScreen() {
                 </Pressable>
 
                 <Pressable
-                  onPress={() => toggleSavedWord(phrase.id)}
+                  onPress={() => toggleSavedPhrase(phrase.id)}
                   accessibilityRole="button"
                   accessibilityLabel={
-                    savedWordIds.includes(phrase.id) ? 'Remove from saved' : 'Save phrase'
+                    savedPhraseIds.includes(phrase.id) ? 'Remove from saved' : 'Save phrase'
                   }
-                  accessibilityState={{ selected: savedWordIds.includes(phrase.id) }}
+                  accessibilityState={{ selected: savedPhraseIds.includes(phrase.id) }}
                   hitSlop={8}
                   style={styles.action}
                 >
                   <Ionicons
-                    name={savedWordIds.includes(phrase.id) ? 'bookmark' : 'bookmark-outline'}
+                    name={savedPhraseIds.includes(phrase.id) ? 'bookmark' : 'bookmark-outline'}
                     size={20}
-                    color={savedWordIds.includes(phrase.id) ? colors.accent : colors.textSubtle}
+                    color={savedPhraseIds.includes(phrase.id) ? colors.accent : colors.textSubtle}
                   />
                 </Pressable>
               </View>

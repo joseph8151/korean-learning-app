@@ -28,7 +28,7 @@ export default function SearchScreen() {
   const results = useMemo(() => searchEverything(query), [query]);
 
   return (
-    <Screen scroll={query.trim().length === 0 ? false : true}>
+    <Screen>
       <View style={styles.header}>
         <Pressable
           onPress={() => router.back()}

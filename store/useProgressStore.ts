@@ -36,6 +36,7 @@ export interface ProgressState {
   lessons: Record<string, LessonProgress>;
   vocabulary: Record<string, VocabularyProgress>;
   savedWordIds: string[];
+  savedPhraseIds: string[];
   mistakeVocabularyIds: string[];
   streak: StreakState;
   activityByDate: Record<string, DailyActivity>;
@@ -49,7 +50,9 @@ export interface ProgressState {
   addStudyTime: (seconds: number) => void;
   recordVocabularyReview: (vocabularyId: string, wasCorrect: boolean) => void;
   toggleSavedWord: (vocabularyId: string) => void;
+  toggleSavedPhrase: (phraseId: string) => void;
   isSaved: (vocabularyId: string) => boolean;
+  isPhraseSaved: (phraseId: string) => boolean;
   clearMistake: (vocabularyId: string) => void;
   recordSpeakingPractice: (seconds: number) => void;
   recordConversationCompleted: () => void;
@@ -63,6 +66,7 @@ const initialState = {
   lessons: {} as Record<string, LessonProgress>,
   vocabulary: {} as Record<string, VocabularyProgress>,
   savedWordIds: [] as string[],
+  savedPhraseIds: [] as string[],
   mistakeVocabularyIds: [] as string[],
   streak: INITIAL_STREAK,
   activityByDate: {} as Record<string, DailyActivity>,
@@ -213,7 +217,15 @@ export const useProgressStore = create<ProgressState>()(
             : [vocabularyId, ...state.savedWordIds],
         })),
 
+      toggleSavedPhrase: (phraseId) =>
+        set((state) => ({
+          savedPhraseIds: state.savedPhraseIds.includes(phraseId)
+            ? state.savedPhraseIds.filter((id) => id !== phraseId)
+            : [phraseId, ...state.savedPhraseIds],
+        })),
+
       isSaved: (vocabularyId) => get().savedWordIds.includes(vocabularyId),
+      isPhraseSaved: (phraseId) => get().savedPhraseIds.includes(phraseId),
 
       clearMistake: (vocabularyId) =>
         set((state) => ({
