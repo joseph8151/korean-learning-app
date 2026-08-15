@@ -40,7 +40,6 @@
   "submit": {
     "production": {
       "android": {
-        "//": "TODO: create a Google Play service account key and point serviceAccountKeyPath at it. Never commit the JSON file.",
         "serviceAccountKeyPath": "./google-play-service-account.json",
         "track": "internal",
         "releaseStatus": "draft"
