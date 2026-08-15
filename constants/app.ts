@@ -1,8 +1,14 @@
 export const APP_NAME = 'KoreanGo';
 export const APP_TAGLINE = 'Speak Korean. Live Korea.';
+// TODO: point these at wherever you host `site/`. The defaults assume GitHub
+// Pages (Settings -> Pages -> Source: GitHub Actions). Google Play rejects an
+// app whose privacy policy URL is unreachable, so verify these open in a
+// browser before submitting.
+const SITE_URL = 'https://joseph8151.github.io/korean-learning-app';
+
 export const SUPPORT_EMAIL = 'support@koreango.app';
-export const PRIVACY_URL = 'https://koreango.app/privacy';
-export const TERMS_URL = 'https://koreango.app/terms';
+export const PRIVACY_URL = `${SITE_URL}/privacy.html`;
+export const TERMS_URL = `${SITE_URL}/terms.html`;
 
 export const XP_RULES = {
   lessonComplete: 20,
