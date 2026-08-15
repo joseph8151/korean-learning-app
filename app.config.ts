@@ -12,13 +12,12 @@ const SCHEME = 'koreango';
 const VERSION = '1.0.0';
 
 /**
- * TODO: paste the id printed by `eas init` here.
- *
- * It is a public identifier, not a secret, so it belongs in source. It cannot
- * live in `.env` because that file is git-ignored and therefore never reaches
- * the EAS build servers — a production build would fail without this.
+ * Links builds to the EAS project. A public identifier, not a secret, so it
+ * belongs in source — it cannot live in `.env` because that file is
+ * git-ignored and therefore never reaches the EAS build servers.
  */
-const EAS_PROJECT_ID = process.env.EAS_PROJECT_ID ?? '';
+const EAS_PROJECT_ID =
+  process.env.EAS_PROJECT_ID ?? '62c1f081-2370-4938-86a4-bdd882b1ed82';
 
 const config: ExpoConfig = {
   name: APP_NAME,
