@@ -1,0 +1,58 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Native builds
+/android
+/ios
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.keystore
+!debug.keystore
+
+# EAS / store credentials — NEVER commit these
+credentials.json
+google-play-service-account.json
+google-services.json
+GoogleService-Info.plist
+play-store-key*.json
+*service-account*.json
+
+# Environment variables — NEVER commit these
+.env
+.env.*
+!.env.example
+
+# Metro
+.metro-health-check*
+.metro-cache/
+
+# Testing
+coverage/
+
+# Logs
+*.log
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS / editors
+.DS_Store
+*.pem
+.idea/
+.vscode/
+!.vscode/extensions.json
+
+# Temporary
+*.tsbuildinfo
+.tmp/
