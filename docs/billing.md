@@ -38,6 +38,9 @@ so entitlements stay correct without the learner reopening the app.
 
 ## Step 1 — Play Console: create the app
 
+0. Run `eas init` locally first, then paste the printed id into `EAS_PROJECT_ID`
+   at the top of `app.config.ts`. It is a public identifier, and a production
+   build fails without it.
 1. [Play Console](https://play.google.com/console) → **Create app**
 2. Package name must be exactly `com.koreango.app` (or change it in `app.config.ts`
    **before** your first upload — it can never be changed after publishing).

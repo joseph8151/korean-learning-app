@@ -11,6 +11,15 @@ const IOS_BUNDLE_ID = 'com.koreango.app';
 const SCHEME = 'koreango';
 const VERSION = '1.0.0';
 
+/**
+ * TODO: paste the id printed by `eas init` here.
+ *
+ * It is a public identifier, not a secret, so it belongs in source. It cannot
+ * live in `.env` because that file is git-ignored and therefore never reaches
+ * the EAS build servers — a production build would fail without this.
+ */
+const EAS_PROJECT_ID = process.env.EAS_PROJECT_ID ?? '';
+
 const config: ExpoConfig = {
   name: APP_NAME,
   slug: SLUG,
@@ -87,8 +96,7 @@ const config: ExpoConfig = {
 
   extra: {
     eas: {
-      // TODO: replace after running `eas init` — this links the project to your EAS account.
-      projectId: process.env.EAS_PROJECT_ID ?? undefined,
+      projectId: EAS_PROJECT_ID || undefined,
     },
   },
 };
