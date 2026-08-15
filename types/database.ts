@@ -5,13 +5,20 @@
  */
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
-interface TableShape<Row, Insert, Update> {
+/**
+ * `Relationships` is required by postgrest-js: without it the schema does not
+ * satisfy `GenericSchema` and every query silently degrades to `any`/`never`
+ * instead of failing loudly. We declare no embedded relationships because the
+ * app never uses PostgREST resource embedding.
+ */
+type TableShape<Row, Insert, Update> = {
   Row: Row;
   Insert: Insert;
   Update: Update;
+  Relationships: [];
 }
 
-export interface ProfileRow {
+export type ProfileRow = {
   id: string;
   email: string | null;
   display_name: string;
@@ -22,11 +29,12 @@ export interface ProfileRow {
   learning_goals: string[];
   daily_goal_minutes: number;
   total_xp: number;
+  sync_extras: Json;
   created_at: string;
   updated_at: string;
 }
 
-export interface CourseRow {
+export type CourseRow = {
   id: string;
   title: string;
   description: string;
@@ -39,7 +47,7 @@ export interface CourseRow {
   updated_at: string;
 }
 
-export interface UnitRow {
+export type UnitRow = {
   id: string;
   course_id: string;
   title: string;
@@ -49,7 +57,7 @@ export interface UnitRow {
   updated_at: string;
 }
 
-export interface LessonRow {
+export type LessonRow = {
   id: string;
   unit_id: string;
   title: string;
@@ -62,7 +70,7 @@ export interface LessonRow {
   updated_at: string;
 }
 
-export interface LessonContentRow {
+export type LessonContentRow = {
   id: string;
   lesson_id: string;
   content_type: string;
@@ -75,7 +83,7 @@ export interface LessonContentRow {
   created_at: string;
 }
 
-export interface VocabularyRow {
+export type VocabularyRow = {
   id: string;
   korean: string;
   english: string;
@@ -88,7 +96,7 @@ export interface VocabularyRow {
   created_at: string;
 }
 
-export interface QuizRow {
+export type QuizRow = {
   id: string;
   lesson_id: string | null;
   question_type: string;
@@ -100,7 +108,7 @@ export interface QuizRow {
   created_at: string;
 }
 
-export interface ProgressRow {
+export type ProgressRow = {
   id: string;
   user_id: string;
   lesson_id: string;
@@ -113,7 +121,7 @@ export interface ProgressRow {
   updated_at: string;
 }
 
-export interface VocabularyProgressRow {
+export type VocabularyProgressRow = {
   id: string;
   user_id: string;
   vocabulary_id: string;
@@ -126,14 +134,14 @@ export interface VocabularyProgressRow {
   updated_at: string;
 }
 
-export interface SavedWordRow {
+export type SavedWordRow = {
   id: string;
   user_id: string;
   vocabulary_id: string;
   created_at: string;
 }
 
-export interface DailyPhraseRow {
+export type DailyPhraseRow = {
   id: string;
   korean: string;
   english: string;
@@ -144,7 +152,7 @@ export interface DailyPhraseRow {
   created_at: string;
 }
 
-export interface UserStreakRow {
+export type UserStreakRow = {
   user_id: string;
   current_streak: number;
   longest_streak: number;
@@ -152,7 +160,7 @@ export interface UserStreakRow {
   updated_at: string;
 }
 
-export interface SubscriptionRow {
+export type SubscriptionRow = {
   user_id: string;
   plan: string;
   status: string;
@@ -163,12 +171,12 @@ export interface SubscriptionRow {
 
 type Insert<T, Optional extends keyof T> = Omit<T, Optional> & Partial<Pick<T, Optional>>;
 
-export interface Database {
+export type Database = {
   public: {
     Tables: {
       profiles: TableShape<
         ProfileRow,
-        Insert<ProfileRow, 'created_at' | 'updated_at' | 'total_xp'>,
+        Insert<ProfileRow, 'created_at' | 'updated_at' | 'total_xp' | 'sync_extras'>,
         Partial<ProfileRow>
       >;
       courses: TableShape<CourseRow, Insert<CourseRow, 'created_at' | 'updated_at'>, Partial<CourseRow>>;

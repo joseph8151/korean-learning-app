@@ -20,6 +20,7 @@ import { useAsyncData } from '@/hooks/useAsyncData';
 import { useStudyTimer } from '@/hooks/useStudyTimer';
 import { isAnswerCorrect, scoreQuiz, type QuizAnswer } from '@/lib/scoring';
 import { contentService } from '@/services/content';
+import { syncService } from '@/services/sync';
 import { useProgressStore } from '@/store/useProgressStore';
 import { useUserStore } from '@/store/useUserStore';
 import type { Lesson, LessonContent, Quiz, Vocabulary } from '@/types/content';
@@ -37,7 +38,9 @@ export default function LessonScreen() {
   const { elapsedSeconds } = useStudyTimer();
 
   const dailyGoalMinutes = useUserStore((state) => state.dailyGoalMinutes);
+  const userId = useUserStore((state) => state.userId);
   const startLesson = useProgressStore((state) => state.startLesson);
+  const getSyncableSnapshot = useProgressStore((state) => state.getSyncableSnapshot);
   const completeLesson = useProgressStore((state) => state.completeLesson);
   const recordVocabularyReview = useProgressStore((state) => state.recordVocabularyReview);
 
@@ -131,6 +134,12 @@ export default function LessonScreen() {
       studySeconds: elapsedSeconds(),
       dailyGoalMinutes,
     });
+
+    // Fire-and-forget: a failed upload is harmless because the next sign-in
+    // merges this device's state anyway.
+    if (userId) {
+      void syncService.pushLatest(userId, getSyncableSnapshot());
+    }
 
     router.replace({
       pathname: '/lesson/complete',

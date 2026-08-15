@@ -1,17 +1,18 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Pressable, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, StyleSheet, View } from 'react-native';
 
 import { AuthForm, type AuthFormValues } from '@/features/auth/AuthForm';
 import { AppButton, AppText, Screen } from '@/components/ui';
-import { colors, spacing } from '@/constants/theme';
+import { colors, radius, spacing } from '@/constants/theme';
 import { authService } from '@/services/auth';
+import { useSignInFlow } from '@/hooks/useSignInFlow';
 import { useUserStore } from '@/store/useUserStore';
 
 export default function SignUpScreen() {
   const router = useRouter();
-  const signIn = useUserStore((state) => state.signIn);
+  const { syncingMessage, completeSignIn } = useSignInFlow();
   const continueAsGuest = useUserStore((state) => state.continueAsGuest);
   const setDisplayName = useUserStore((state) => state.setDisplayName);
 
@@ -37,8 +38,7 @@ export default function SignUpScreen() {
     setDisplayName(values.displayName);
 
     if (outcome.user && !outcome.needsEmailConfirmation) {
-      signIn(outcome.user);
-      router.replace('/(tabs)');
+      await completeSignIn(outcome.user);
       return;
     }
 
@@ -54,8 +54,7 @@ export default function SignUpScreen() {
     setBusy(false);
 
     if (outcome.ok && outcome.user) {
-      signIn(outcome.user);
-      router.replace('/(tabs)');
+      await completeSignIn(outcome.user);
       return;
     }
     setError(outcome.message);
@@ -80,8 +79,22 @@ export default function SignUpScreen() {
         Create a free account to keep your streak, XP and saved words safe.
       </AppText>
 
+      {syncingMessage ? (
+        <View style={styles.syncing} accessibilityLiveRegion="polite">
+          <ActivityIndicator size="small" color={colors.primary} />
+          <AppText variant="caption" color={colors.primary}>
+            {syncingMessage}
+          </AppText>
+        </View>
+      ) : null}
+
       <View style={styles.form}>
-        <AuthForm mode="sign-up" busy={busy} errorMessage={error} onSubmit={handleSubmit} />
+        <AuthForm
+          mode="sign-up"
+          busy={busy || syncingMessage !== null}
+          errorMessage={error}
+          onSubmit={handleSubmit}
+        />
       </View>
 
       <View style={styles.divider}>
@@ -96,7 +109,7 @@ export default function SignUpScreen() {
         label="Continue with Google"
         variant="outline"
         onPress={handleGoogle}
-        disabled={busy}
+        disabled={busy || syncingMessage !== null}
         icon={<Ionicons name="logo-google" size={18} color={colors.primary} />}
       />
 
@@ -131,6 +144,15 @@ const styles = StyleSheet.create({
   header: { flexDirection: 'row', justifyContent: 'flex-end', paddingTop: spacing.lg },
   close: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
   subtitle: { marginTop: spacing.sm },
+  syncing: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    backgroundColor: colors.primarySoft,
+    borderRadius: radius.md,
+    padding: spacing.lg,
+    marginTop: spacing.xl,
+  },
   form: { marginTop: spacing.xxl },
   divider: { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, marginVertical: spacing.xl },
   line: { flex: 1, height: StyleSheet.hairlineWidth, backgroundColor: colors.border },

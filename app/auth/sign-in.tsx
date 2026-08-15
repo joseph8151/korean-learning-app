@@ -1,17 +1,17 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 
 import { AuthForm, type AuthFormValues } from '@/features/auth/AuthForm';
 import { AppButton, AppText, Screen } from '@/components/ui';
-import { colors, spacing } from '@/constants/theme';
+import { colors, radius, spacing } from '@/constants/theme';
 import { authService } from '@/services/auth';
-import { useUserStore } from '@/store/useUserStore';
+import { useSignInFlow } from '@/hooks/useSignInFlow';
 
 export default function SignInScreen() {
   const router = useRouter();
-  const signIn = useUserStore((state) => state.signIn);
+  const { syncingMessage, completeSignIn } = useSignInFlow();
 
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -24,8 +24,7 @@ export default function SignInScreen() {
     setBusy(false);
 
     if (outcome.ok && outcome.user) {
-      signIn(outcome.user);
-      router.replace('/(tabs)');
+      await completeSignIn(outcome.user);
       return;
     }
     setError(outcome.message);
@@ -38,8 +37,7 @@ export default function SignInScreen() {
     setBusy(false);
 
     if (outcome.ok && outcome.user) {
-      signIn(outcome.user);
-      router.replace('/(tabs)');
+      await completeSignIn(outcome.user);
       return;
     }
     setError(outcome.message);
@@ -64,8 +62,22 @@ export default function SignInScreen() {
         Pick up your streak where you left it.
       </AppText>
 
+      {syncingMessage ? (
+        <View style={styles.syncing} accessibilityLiveRegion="polite">
+          <ActivityIndicator size="small" color={colors.primary} />
+          <AppText variant="caption" color={colors.primary}>
+            {syncingMessage}
+          </AppText>
+        </View>
+      ) : null}
+
       <View style={styles.form}>
-        <AuthForm mode="sign-in" busy={busy} errorMessage={error} onSubmit={handleSubmit} />
+        <AuthForm
+          mode="sign-in"
+          busy={busy || syncingMessage !== null}
+          errorMessage={error}
+          onSubmit={handleSubmit}
+        />
       </View>
 
       <View style={styles.divider}>
@@ -80,7 +92,7 @@ export default function SignInScreen() {
         label="Continue with Google"
         variant="outline"
         onPress={handleGoogle}
-        disabled={busy}
+        disabled={busy || syncingMessage !== null}
         icon={<Ionicons name="logo-google" size={18} color={colors.primary} />}
       />
 
@@ -105,6 +117,15 @@ const styles = StyleSheet.create({
   header: { flexDirection: 'row', justifyContent: 'flex-end', paddingTop: spacing.lg },
   close: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
   subtitle: { marginTop: spacing.sm },
+  syncing: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    backgroundColor: colors.primarySoft,
+    borderRadius: radius.md,
+    padding: spacing.lg,
+    marginTop: spacing.xl,
+  },
   form: { marginTop: spacing.xxl },
   divider: { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, marginVertical: spacing.xl },
   line: { flex: 1, height: StyleSheet.hairlineWidth, backgroundColor: colors.border },

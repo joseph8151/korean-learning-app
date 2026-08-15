@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { useState } from 'react';
 import { Alert, Linking, Pressable, StyleSheet, View } from 'react-native';
 
 import { AppButton, AppText, Card, PremiumBadge, Screen, SectionHeader } from '@/components/ui';
@@ -7,6 +8,7 @@ import { LEARNING_GOAL_OPTIONS, PRIVACY_URL, SUPPORT_EMAIL, TERMS_URL } from '@/
 import { colors, radius, spacing } from '@/constants/theme';
 import { useIsPremium } from '@/hooks/usePremium';
 import { authService } from '@/services/auth';
+import { syncService } from '@/services/sync';
 import { useProgressStore } from '@/store/useProgressStore';
 import { useUserStore } from '@/store/useUserStore';
 
@@ -22,7 +24,10 @@ export default function ProfileScreen() {
   const dailyGoalMinutes = useUserStore((state) => state.dailyGoalMinutes);
   const learningGoals = useUserStore((state) => state.learningGoals);
   const isGuest = useUserStore((state) => state.isGuest);
+  const userId = useUserStore((state) => state.userId);
   const signOut = useUserStore((state) => state.signOut);
+  const getSyncableSnapshot = useProgressStore((state) => state.getSyncableSnapshot);
+  const adoptSyncedProgress = useProgressStore((state) => state.adoptSyncedProgress);
   const resetUser = useUserStore((state) => state.resetAll);
   const resetProgress = useProgressStore((state) => state.resetAll);
 
@@ -30,6 +35,19 @@ export default function ProfileScreen() {
     .map((goal) => LEARNING_GOAL_OPTIONS.find((option) => option.id === goal)?.label)
     .filter(Boolean)
     .join(', ');
+
+  const [syncing, setSyncing] = useState(false);
+
+  const handleSync = async () => {
+    if (!userId || syncing) return;
+    setSyncing(true);
+
+    const result = await syncService.syncOnSignIn(userId, getSyncableSnapshot());
+    if (result.progress) adoptSyncedProgress(result.progress);
+
+    setSyncing(false);
+    Alert.alert('Sync', result.message);
+  };
 
   const handleSignOut = () => {
     Alert.alert('Log out?', 'Your progress stays on this device.', [
@@ -149,7 +167,15 @@ export default function ProfileScreen() {
 
       <View style={styles.footer}>
         {!isGuest ? (
-          <AppButton label="Log Out" variant="outline" onPress={handleSignOut} />
+          <>
+            <AppButton
+              label="Sync Now"
+              variant="outline"
+              loading={syncing}
+              onPress={handleSync}
+            />
+            <AppButton label="Log Out" variant="ghost" onPress={handleSignOut} />
+          </>
         ) : null}
         <AppButton label="Reset All Data" variant="ghost" onPress={handleReset} />
       </View>

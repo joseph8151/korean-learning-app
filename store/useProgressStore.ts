@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 import { toDateKey } from '@/lib/date';
+import type { SyncableProgress } from '@/lib/mergeProgress';
 import { calculateLessonXp } from '@/lib/xp';
 import { INITIAL_STREAK, recordActivity } from '@/lib/streak';
 import { createVocabularyProgress, reviewVocabulary } from '@/lib/spacedReview';
@@ -57,6 +58,8 @@ export interface ProgressState {
   recordSpeakingPractice: (seconds: number) => void;
   recordConversationCompleted: () => void;
   unlockAchievement: (id: AchievementId) => void;
+  getSyncableSnapshot: () => SyncableProgress;
+  adoptSyncedProgress: (progress: SyncableProgress) => void;
   resetAll: () => void;
 }
 
@@ -249,6 +252,25 @@ export const useProgressStore = create<ProgressState>()(
             ? state
             : { achievements: [...state.achievements, id] },
         ),
+
+      getSyncableSnapshot: () => {
+        const state = get();
+        return {
+          totalXp: state.totalXp,
+          lessons: state.lessons,
+          vocabulary: state.vocabulary,
+          savedWordIds: state.savedWordIds,
+          savedPhraseIds: state.savedPhraseIds,
+          mistakeVocabularyIds: state.mistakeVocabularyIds,
+          streak: state.streak,
+          activityByDate: state.activityByDate,
+          achievements: state.achievements,
+          speakingSeconds: state.speakingSeconds,
+          conversationsCompleted: state.conversationsCompleted,
+        };
+      },
+
+      adoptSyncedProgress: (progress) => set({ ...progress }),
 
       resetAll: () => set({ ...initialState, hydrated: true }),
     }),
