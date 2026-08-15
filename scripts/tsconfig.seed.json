@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "module": "esnext",
+    "target": "es2022",
+    "moduleResolution": "bundler",
+    "skipLibCheck": true,
+    "isolatedModules": false,
+    "rootDir": "..",
+    "paths": {
+      "@/*": [
+        "../*"
+      ]
+    }
+  },
+  "include": [
+    "../constants/content/**/*.ts",
+    "../types/**/*.ts"
+  ]
+}

@@ -17,7 +17,9 @@
     "check": "npm run typecheck && npm run lint && npm run test",
     "build:android:preview": "eas build --platform android --profile preview",
     "build:android:production": "eas build --platform android --profile production",
-    "submit:android": "eas submit --platform android --profile production"
+    "submit:android": "eas submit --platform android --profile production",
+    "seed:generate": "node scripts/generate-seed.mjs",
+    "supabase:types": "supabase gen types typescript --linked > types/database.generated.ts"
   },
   "dependencies": {
     "@expo/metro-runtime": "~57.0.10",
