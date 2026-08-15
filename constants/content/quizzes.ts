@@ -44,4 +44,37 @@ export const QUIZZES: Quiz[] = [
   { id: 'q-convenience-1', lessonId: 'lesson-food-convenience', questionType: 'multiple_choice_ko_en', question: 'What does 데워 주세요 mean?', prompt: '데워 주세요', correctAnswer: 'Please heat it up', options: ['Please heat it up', 'Please pack it', 'Please give me a bag', 'Please stop here'], metadata: null },
   { id: 'q-subway-1', lessonId: 'lesson-transport-subway', questionType: 'multiple_choice_ko_en', question: 'What does 환승 mean?', prompt: '환승', correctAnswer: 'Transfer', options: ['Transfer', 'Exit', 'Station', 'Ticket'], metadata: null },
   { id: 'q-subway-2', lessonId: 'lesson-transport-subway', questionType: 'sentence_ordering', question: 'Build: "How do I get to Gangnam Station?"', prompt: 'How do I get to Gangnam Station?', correctAnswer: '강남역 어떻게 가요', options: ['강남역', '어떻게', '가요'], metadata: null },
+
+  { id: 'q-opinions-1', lessonId: 'lesson-conversation-opinions', questionType: 'multiple_choice_ko_en', question: 'What does 글쎄요 signal?', prompt: '글쎄요', correctAnswer: 'Hesitation or soft disagreement', options: ['Hesitation or soft disagreement', 'Strong agreement', 'A firm no', 'Gratitude'], metadata: null },
+  { id: 'q-opinions-2', lessonId: 'lesson-conversation-opinions', questionType: 'fill_in_the_blank', question: 'Complete: 좋은 것 ___. ("It seems good.")', prompt: '좋은 것 ___.', correctAnswer: '같아요', options: ['같아요', '주세요', '있어요', '했어요'], metadata: null },
+  { id: 'q-opinions-3', lessonId: 'lesson-conversation-opinions', questionType: 'true_false', question: '~것 같아요 makes a statement softer, not stronger.', prompt: null, correctAnswer: 'True', options: ['True', 'False'], metadata: null },
+
+  { id: 'q-feelings-1', lessonId: 'lesson-conversation-feelings', questionType: 'multiple_choice_ko_en', question: 'What does 피곤해요 mean?', prompt: '피곤해요', correctAnswer: 'I am tired', options: ['I am tired', 'I am excited', 'I am hungry', 'I am busy'], metadata: null },
+  { id: 'q-feelings-2', lessonId: 'lesson-conversation-feelings', questionType: 'fill_in_the_blank', question: 'Complete: 스트레스 ___. ("I got stressed.")', prompt: '스트레스 ___.', correctAnswer: '받았어요', options: ['받았어요', '갔어요', '먹었어요', '했어요'], metadata: null },
+
+  { id: 'q-plans-1', lessonId: 'lesson-conversation-plans', questionType: 'multiple_choice_en_ko', question: 'How do you ask "when are you free?"', prompt: null, correctAnswer: '언제 시간 괜찮아요?', options: ['언제 시간 괜찮아요?', '어디에 있어요?', '얼마예요?', '뭐 했어요?'], metadata: null },
+  { id: 'q-plans-2', lessonId: 'lesson-conversation-plans', questionType: 'sentence_ordering', question: 'Build: "How about Saturday?"', prompt: 'How about Saturday?', correctAnswer: '토요일 어때요', options: ['토요일', '어때요'], metadata: null },
+
+  { id: 'q-declining-1', lessonId: 'lesson-conversation-declining', questionType: 'multiple_choice_ko_en', question: 'What does 미안하지만 introduce?', prompt: '미안하지만', correctAnswer: 'A polite refusal', options: ['A polite refusal', 'An apology for being late', 'A thank you', 'A greeting'], metadata: null },
+  { id: 'q-declining-2', lessonId: 'lesson-conversation-declining', questionType: 'true_false', question: 'Adding 다음에 keeps a declined invitation friendly.', prompt: null, correctAnswer: 'True', options: ['True', 'False'], metadata: null },
+
+  { id: 'q-pharmacy-1', lessonId: 'lesson-living-pharmacy', questionType: 'multiple_choice_ko_en', question: 'What does 머리가 아파요 mean?', prompt: '머리가 아파요.', correctAnswer: 'My head hurts', options: ['My head hurts', 'My stomach hurts', 'I am dizzy', 'I have a fever'], metadata: null },
+  { id: 'q-pharmacy-2', lessonId: 'lesson-living-pharmacy', questionType: 'multiple_choice_en_ko', question: 'How do you ask for cold medicine?', prompt: null, correctAnswer: '감기약 주세요', options: ['감기약 주세요', '병원 가요', '물 주세요', '얼마예요?'], metadata: null },
+  { id: 'q-pharmacy-3', lessonId: 'lesson-living-pharmacy', questionType: 'listening', question: 'What did you hear?', prompt: '식후 삼십 분에 드세요.', correctAnswer: 'Take it 30 minutes after meals', options: ['Take it 30 minutes after meals', 'Take it before bed', 'Take three a day', 'Take it with water'], metadata: null },
+
+  { id: 'q-emergency-1', lessonId: 'lesson-living-emergency', questionType: 'multiple_choice_ko_en', question: 'Which number is the ambulance in Korea?', prompt: null, correctAnswer: '119', options: ['119', '112', '911', '999'], metadata: null },
+  { id: 'q-emergency-2', lessonId: 'lesson-living-emergency', questionType: 'multiple_choice_en_ko', question: 'How do you shout "please help me"?', prompt: null, correctAnswer: '도와주세요', options: ['도와주세요', '감사합니다', '괜찮아요', '실례합니다'], metadata: null },
+
+  { id: 'q-apartment-1', lessonId: 'lesson-living-apartment', questionType: 'multiple_choice_ko_en', question: 'What does 고장났어요 mean?', prompt: '고장났어요', correctAnswer: 'It is broken', options: ['It is broken', 'It is expensive', 'It is closed', 'It is ready'], metadata: null },
+  { id: 'q-apartment-2', lessonId: 'lesson-living-apartment', questionType: 'fill_in_the_blank', question: 'Complete: 뜨거운 물이 ___ 나와요. ("No hot water.")', prompt: '뜨거운 물이 ___ 나와요.', correctAnswer: '안', options: ['안', '더', '잘', '또'], metadata: null },
+
+  { id: 'q-hotel-1', lessonId: 'lesson-travel-hotel', questionType: 'multiple_choice_en_ko', question: 'How do you say you would like to check in?', prompt: null, correctAnswer: '체크인 하려고 하는데요', options: ['체크인 하려고 하는데요', '예약 취소할게요', '짐 주세요', '얼마예요?'], metadata: null },
+  { id: 'q-hotel-2', lessonId: 'lesson-travel-hotel', questionType: 'multiple_choice_ko_en', question: 'What does 짐 좀 맡길 수 있어요? ask?', prompt: '짐 좀 맡길 수 있어요?', correctAnswer: 'Can I leave my luggage?', options: ['Can I leave my luggage?', 'Can I check out late?', 'Can I get a receipt?', 'Can I change rooms?'], metadata: null },
+
+  { id: 'q-sightseeing-1', lessonId: 'lesson-travel-sightseeing', questionType: 'multiple_choice_ko_en', question: 'What does 입장료 mean?', prompt: '입장료', correctAnswer: 'Entry fee', options: ['Entry fee', 'Opening time', 'Exit', 'Ticket office'], metadata: null },
+  { id: 'q-sightseeing-2', lessonId: 'lesson-travel-sightseeing', questionType: 'sentence_ordering', question: 'Build: "Two adult tickets, please."', prompt: 'Two adult tickets, please.', correctAnswer: '어른 두 장 주세요', options: ['어른', '두 장', '주세요'], metadata: null },
+
+  { id: 'q-email-1', lessonId: 'lesson-work-email', questionType: 'multiple_choice_ko_en', question: 'What does 확인 부탁드립니다 mean?', prompt: '확인 부탁드립니다.', correctAnswer: 'Please kindly confirm', options: ['Please kindly confirm', 'Thank you for your work', 'I will send it later', 'Please call me'], metadata: null },
+  { id: 'q-email-2', lessonId: 'lesson-work-email', questionType: 'word_matching', question: 'Match the Korean to its meaning.', prompt: null, correctAnswer: '일정', options: ['일정', '확인', '자료', '회의'], metadata: { matchTarget: 'Schedule' } },
+  { id: 'q-email-3', lessonId: 'lesson-work-email', questionType: 'true_false', question: '~드립니다 is a humble ending that makes writing sound polite.', prompt: null, correctAnswer: 'True', options: ['True', 'False'], metadata: null },
 ];

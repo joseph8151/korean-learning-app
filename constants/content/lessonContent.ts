@@ -361,6 +361,174 @@ export const LESSON_SPECS: LessonSpec[] = [
     speaking: [{ korean: '수고하셨습니다. 먼저 들어가 보겠습니다.', english: "Good work today. I'll head out first.", romanization: 'sugohasyeotseumnida. meonjeo deureoga bogesseumnida.' }],
     summary: ['~습니다 is the formal business ending.', '수고하셨습니다 closes the workday.', 'Leaving before others needs a polite phrase.'],
   },
+  {
+    lessonId: 'lesson-conversation-opinions',
+    intro: {
+      heading: 'Giving an Opinion',
+      body: 'Korean opinions come wrapped in softeners. Saying something flatly can read as blunt, so learn the cushion first.',
+    },
+    vocabularyIds: ['v-saenggak', 'v-machayo', 'v-geulsseyo'],
+    expressions: [
+      { korean: '제 생각에는 좋은 것 같아요.', english: 'In my opinion, it seems good.', romanization: 'je saenggageneun joeun geot gatayo.', note: '~것 같아요 softens almost any statement.' },
+      { korean: '네, 맞아요.', english: "Yes, that's right.", romanization: 'ne, majayo.' },
+      { korean: '글쎄요, 조금 다르게 생각해요.', english: "Hmm, I see it a little differently.", romanization: 'geulsseyo, jogeum dareuge saenggakhaeyo.' },
+    ],
+    listening: [
+      { korean: '어떻게 생각하세요?', english: 'What do you think?', romanization: 'eotteoke saenggakhaseyo?' },
+    ],
+    speaking: [
+      { korean: '제 생각에는 괜찮은 것 같아요.', english: 'I think it seems fine.', romanization: 'je saenggageneun gwaenchaneun geot gatayo.' },
+    ],
+    summary: [
+      '~것 같아요 turns a claim into an impression.',
+      '글쎄요 buys you time and softens disagreement.',
+      'Direct contradiction is rare — lead with agreement, then adjust.',
+    ],
+  },
+  {
+    lessonId: 'lesson-conversation-feelings',
+    intro: {
+      heading: 'Talking About Feelings',
+      body: 'Four adjectives cover most of what you need to say about your day.',
+    },
+    vocabularyIds: ['v-pigonhaeyo', 'v-sinnayo', 'v-seuteureseu', 'v-seopseophaeyo'],
+    expressions: [
+      { korean: '오늘 너무 피곤해요.', english: "I'm so tired today.", romanization: 'oneul neomu pigonhaeyo.' },
+      { korean: '요즘 스트레스 많이 받아요.', english: "I've been really stressed lately.", romanization: 'yojeum seuteureseu mani badayo.', note: '스트레스 pairs with 받다 — you "receive" stress.' },
+      { korean: '내일 여행 가서 신나요.', english: "I'm excited to travel tomorrow.", romanization: 'naeil yeohaeng gaseo sinnayo.' },
+    ],
+    listening: [{ korean: '괜찮아요? 무슨 일 있어요?', english: 'Are you okay? Is something wrong?', romanization: 'gwaenchanayo? museun il isseoyo?' }],
+    speaking: [{ korean: '조금 피곤하지만 괜찮아요.', english: "I'm a bit tired but I'm fine.", romanization: 'jogeum pigonhajiman gwaenchanayo.' }],
+    summary: ['너무 = "so / too much".', '스트레스 받다 is the fixed pairing.', '~지만 joins two clauses as "but".'],
+  },
+  {
+    lessonId: 'lesson-conversation-plans',
+    intro: {
+      heading: 'Making Plans',
+      body: 'Koreans make plans fast and confirm the day before. These lines do both.',
+    },
+    vocabularyIds: ['v-yaksok', 'v-eonje', 'v-daeum-e'],
+    expressions: [
+      { korean: '언제 시간 괜찮아요?', english: 'When are you free?', romanization: 'eonje sigan gwaenchanayo?' },
+      { korean: '토요일 어때요?', english: 'How about Saturday?', romanization: 'toyoil eottaeyo?' },
+      { korean: '그럼 그때 봬요.', english: 'See you then.', romanization: 'geureom geuttae bwaeyo.' },
+    ],
+    listening: [{ korean: '이번 주말에 뭐 해요?', english: 'What are you doing this weekend?', romanization: 'ibeon jumare mwo haeyo?' }],
+    speaking: [{ korean: '토요일 어때요? 저는 괜찮아요.', english: 'How about Saturday? I am free.', romanization: 'toyoil eottaeyo? jeoneun gwaenchanayo.' }],
+    summary: ['~ 어때요? proposes anything.', '약속 means a plan with a person, not a promise.', '봬요 is the polite "see you".'],
+  },
+  {
+    lessonId: 'lesson-conversation-declining',
+    intro: {
+      heading: 'Saying No Politely',
+      body: 'A flat 아니요 to an invitation feels cold. Korean declines with a reason and a future opening.',
+    },
+    vocabularyIds: ['v-mianhajiman', 'v-daeum-e', 'v-yaksok'],
+    expressions: [
+      { korean: '미안하지만 오늘은 어려울 것 같아요.', english: "Sorry, today looks difficult for me.", romanization: 'mianhajiman oneureun eoryeoul geot gatayo.' },
+      { korean: '다음에 꼭 같이 가요!', english: "Let's definitely go together next time!", romanization: 'daeume kkok gachi gayo!' },
+      { korean: '이미 약속이 있어서요.', english: 'It is because I already have plans.', romanization: 'imi yaksogi isseoseoyo.' },
+    ],
+    listening: [{ korean: '아쉽네요. 그럼 다음에요!', english: "That's a shame. Next time then!", romanization: 'aswimneyo. geureom daeumeyo!' }],
+    speaking: [{ korean: '미안하지만 다음에 갈게요.', english: "Sorry, I'll go next time.", romanization: 'mianhajiman daeume galgeyo.' }],
+    summary: ['Always pair a decline with 다음에.', '~아서요 gives a reason and softens the sentence end.', 'Ending on an invitation keeps the relationship warm.'],
+  },
+  {
+    lessonId: 'lesson-living-pharmacy',
+    intro: {
+      heading: 'At the Pharmacy',
+      body: 'Korean pharmacists hand out medicine for minor issues without a prescription. Describe the symptom and they do the rest.',
+    },
+    vocabularyIds: ['v-yakguk', 'v-yak', 'v-apayo', 'v-gamgi'],
+    expressions: [
+      { korean: '감기약 주세요.', english: 'Cold medicine, please.', romanization: 'gamgiyak juseyo.' },
+      { korean: '머리가 아파요.', english: 'My head hurts.', romanization: 'meoriga apayo.', note: 'Body part + 가/이 아파요 works for anything.' },
+      { korean: '하루에 몇 번 먹어요?', english: 'How many times a day do I take it?', romanization: 'harue myeot beon meogeoyo?' },
+    ],
+    listening: [{ korean: '식후 삼십 분에 드세요.', english: 'Take it 30 minutes after meals.', romanization: 'sikhu samsip bune deuseyo.' }],
+    speaking: [{ korean: '목이 아파요. 약 주세요.', english: 'My throat hurts. Medicine, please.', romanization: 'mogi apayo. yak juseyo.' }],
+    summary: ['~가 아파요 describes any pain.', '약국 handles minor illness without a doctor.', '식후 = after meals, 식전 = before meals.'],
+  },
+  {
+    lessonId: 'lesson-living-emergency',
+    intro: {
+      heading: 'Getting Help Fast',
+      body: 'Short, loud and unambiguous. These are the sentences to memorise before you need them.',
+    },
+    vocabularyIds: ['v-dowajuseyo', 'v-byeongwon', 'v-apayo'],
+    expressions: [
+      { korean: '도와주세요!', english: 'Please help me!', romanization: 'dowajuseyo!' },
+      { korean: '119 불러 주세요.', english: 'Please call 119.', romanization: 'ilillgu bulleo juseyo.', note: '119 is fire and ambulance; 112 is police.' },
+      { korean: '병원에 가야 해요.', english: 'I need to go to the hospital.', romanization: 'byeongwone gaya haeyo.' },
+    ],
+    listening: [{ korean: '어디가 아프세요?', english: 'Where does it hurt?', romanization: 'eodiga apeuseyo?' }],
+    speaking: [{ korean: '도와주세요! 119 불러 주세요.', english: 'Help! Please call 119.', romanization: 'dowajuseyo! ilillgu bulleo juseyo.' }],
+    summary: ['119 = ambulance and fire.', '112 = police.', '~아/어야 해요 means "I have to".'],
+  },
+  {
+    lessonId: 'lesson-living-apartment',
+    intro: {
+      heading: 'Apartment Problems',
+      body: 'Most issues go through the 관리실 (management office) rather than the landlord directly.',
+    },
+    vocabularyIds: ['v-jibju-in', 'v-gowajang', 'v-ttatteutan-mul', 'v-gwanribi'],
+    expressions: [
+      { korean: '뜨거운 물이 안 나와요.', english: 'There is no hot water.', romanization: 'tteugeoun muri an nawayo.' },
+      { korean: '보일러가 고장났어요.', english: 'The boiler is broken.', romanization: 'boilleoga gojangnasseoyo.' },
+      { korean: '언제 고쳐 주실 수 있어요?', english: 'When can you fix it?', romanization: 'eonje gochyeo jusil su isseoyo?' },
+    ],
+    listening: [{ korean: '오늘 오후에 사람 보낼게요.', english: "I'll send someone this afternoon.", romanization: 'oneul ohue saram bonaelgeyo.' }],
+    speaking: [{ korean: '뜨거운 물이 안 나와요. 확인 부탁드려요.', english: 'There is no hot water. Please check it.', romanization: 'tteugeoun muri an nawayo. hwagin butakdeuryeoyo.' }],
+    summary: ['안 + verb makes it negative.', '고장났어요 covers any broken appliance.', '관리비 is the monthly building fee, separate from rent.'],
+  },
+  {
+    lessonId: 'lesson-travel-hotel',
+    intro: {
+      heading: 'Checking In',
+      body: 'Four lines cover arrival, luggage, and getting an extra hour in the morning.',
+    },
+    vocabularyIds: ['v-yeyak', 'v-chekeuin', 'v-jim'],
+    expressions: [
+      { korean: '체크인 하려고 하는데요.', english: "I'd like to check in.", romanization: 'chekeuin haryeogo haneundeyo.' },
+      { korean: '예약했어요. 이름은 알렉스입니다.', english: 'I have a reservation under Alex.', romanization: 'yeyakhaesseoyo. ireumeun alekseuimnida.' },
+      { korean: '짐 좀 맡길 수 있어요?', english: 'Could I leave my luggage?', romanization: 'jim jom matgil su isseoyo?' },
+    ],
+    listening: [{ korean: '체크아웃은 열한 시입니다.', english: 'Checkout is at 11.', romanization: 'chekeuauseun yeolhan siimnida.' }],
+    speaking: [{ korean: '체크인 하려고 하는데요. 예약했어요.', english: "I'd like to check in. I have a reservation.", romanization: 'chekeuin haryeogo haneundeyo. yeyakhaesseoyo.' }],
+    summary: ['~하려고 하는데요 politely states your intention.', '~ㄹ 수 있어요? asks if something is possible.', 'Give your name in Roman letters — staff will find it.'],
+  },
+  {
+    lessonId: 'lesson-travel-sightseeing',
+    intro: {
+      heading: 'Tickets & Photos',
+      body: 'Buying entry and asking a stranger for a photo — the two things every traveller does daily.',
+    },
+    vocabularyIds: ['v-ipjangnyo', 'v-sajin', 'v-eolmayeyo'],
+    expressions: [
+      { korean: '어른 두 장 주세요.', english: 'Two adult tickets, please.', romanization: 'eoreun du jang juseyo.' },
+      { korean: '사진 좀 찍어 주실 수 있어요?', english: 'Could you take a photo for me?', romanization: 'sajin jom jjigeo jusil su isseoyo?' },
+      { korean: '여기서 사진 찍어도 돼요?', english: 'May I take photos here?', romanization: 'yeogiseo sajin jjigeodo dwaeyo?' },
+    ],
+    listening: [{ korean: '입장은 다섯 시까지입니다.', english: 'Entry is until 5pm.', romanization: 'ipjangeun daseot sikkajiimnida.' }],
+    speaking: [{ korean: '사진 좀 찍어 주실 수 있어요?', english: 'Could you take a photo for me?', romanization: 'sajin jom jjigeo jusil su isseoyo?' }],
+    summary: ['장 counts flat things like tickets.', '~주실 수 있어요? is a very polite request.', '~해도 돼요? asks permission.'],
+  },
+  {
+    lessonId: 'lesson-work-email',
+    intro: {
+      heading: 'Writing a Work Message',
+      body: 'Korean work writing follows a fixed skeleton: greeting, context, request, closing. Fill in the blanks and you sound native.',
+    },
+    vocabularyIds: ['v-butakdeurimnida', 'v-hwagin', 'v-jeonhandeurimnida', 'v-ilcheong'],
+    expressions: [
+      { korean: '안녕하세요, 마케팅팀 알렉스입니다.', english: 'Hello, this is Alex from the marketing team.', romanization: 'annyeonghaseyo, maketingtim alekseuimnida.' },
+      { korean: '자료 전달드립니다.', english: 'I am forwarding the materials.', romanization: 'jaryo jeondaldeurimnida.' },
+      { korean: '확인 부탁드립니다.', english: 'Please kindly confirm.', romanization: 'hwagin butakdeurimnida.', note: 'The standard closing request in Korean work mail.' },
+    ],
+    listening: [{ korean: '일정 조정 가능할까요?', english: 'Would adjusting the schedule be possible?', romanization: 'iljeong jojeong ganeunghalkkayo?' }],
+    speaking: [{ korean: '확인 부탁드립니다. 감사합니다.', english: 'Please kindly confirm. Thank you.', romanization: 'hwagin butakdeurimnida. gamsahamnida.' }],
+    summary: ['Open by naming your team and yourself.', '~드립니다 is the humble form that makes writing polite.', 'Close with 부탁드립니다 or 감사합니다.'],
+  },
 ];
 
 function line(

@@ -7,6 +7,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { colors } from '@/constants/theme';
 import { useDailyReminder } from '@/hooks/useDailyReminder';
+import { useProfileSync } from '@/hooks/useProfileSync';
 import { useProgressStore } from '@/store/useProgressStore';
 import { useUserStore } from '@/store/useUserStore';
 
@@ -18,6 +19,7 @@ export default function RootLayout() {
   const ready = userHydrated && progressHydrated;
 
   useDailyReminder();
+  useProfileSync();
 
   useEffect(() => {
     if (ready) {
