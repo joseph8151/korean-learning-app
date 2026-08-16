@@ -55,7 +55,9 @@ const config: ExpoConfig = {
 
   android: {
     package: ANDROID_PACKAGE,
-    versionCode: 1,
+    // No versionCode here on purpose: eas.json sets appVersionSource to
+    // "remote", so EAS owns the build number and increments it per build. A
+    // value here would be ignored and would drift out of sync.
     adaptiveIcon: {
       foregroundImage: './assets/android-icon-foreground.png',
       backgroundImage: './assets/android-icon-background.png',
