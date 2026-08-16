@@ -5,7 +5,9 @@ import type { ExpoConfig } from 'expo/config';
  * from them, so `KoreanGo` is a placeholder you can swap in one place.
  */
 const APP_NAME = 'KoreanGo';
-const SLUG = 'koreango';
+// Must match the slug of the EAS project that EAS_PROJECT_ID points at, not
+// the app's display name. EAS rejects the build if these disagree.
+const SLUG = 'korean-language-labs';
 const ANDROID_PACKAGE = 'com.koreango.app';
 const IOS_BUNDLE_ID = 'com.koreango.app';
 const SCHEME = 'koreango';
