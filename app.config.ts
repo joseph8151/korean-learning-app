@@ -37,6 +37,11 @@ const config: ExpoConfig = {
 
   assetBundlePatterns: ['**/*'],
 
+  // EAS needs this declared up front. It cannot write it itself because this
+  // is a dynamic config (.ts rather than app.json), which is what made the
+  // build fail with "Cannot automatically write to dynamic config".
+  runtimeVersion: { policy: 'appVersion' },
+
   ios: {
     supportsTablet: true,
     bundleIdentifier: IOS_BUNDLE_ID,
