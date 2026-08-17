@@ -126,7 +126,7 @@ export default function SavedWordsScreen() {
                         hitSlop={8}
                         style={styles.action}
                       >
-                        <Ionicons name="bookmark" size={20} color={colors.accent} />
+                        <Ionicons name="bookmark" size={20} color={colors.accentDeep} />
                       </Pressable>
                     </View>
                   </View>

@@ -15,8 +15,8 @@ const KIND_LABEL: Record<SearchResultKind, string> = {
 
 const KIND_COLOR: Record<SearchResultKind, string> = {
   lesson: colors.primary,
-  vocabulary: colors.success,
-  phrase: colors.accent,
+  vocabulary: colors.successDeep,
+  phrase: colors.accentDeep,
 };
 
 const SUGGESTIONS = ['coffee', 'hello', 'subway', '주세요', 'thank you'];
@@ -41,7 +41,7 @@ export default function SearchScreen() {
         </Pressable>
 
         <View style={styles.searchBox}>
-          <Ionicons name="search" size={18} color={colors.textSubtle} />
+          <Ionicons name="search" size={18} color={colors.textFaint} />
           <TextInput
             value={query}
             onChangeText={setQuery}
@@ -59,7 +59,7 @@ export default function SearchScreen() {
               accessibilityLabel="Clear search"
               hitSlop={8}
             >
-              <Ionicons name="close-circle" size={18} color={colors.textSubtle} />
+              <Ionicons name="close-circle" size={20} color={colors.textMuted} />
             </Pressable>
           ) : null}
         </View>
@@ -67,7 +67,7 @@ export default function SearchScreen() {
 
       {query.trim().length === 0 ? (
         <View style={styles.suggestions}>
-          <AppText variant="micro" color={colors.textMuted}>
+          <AppText variant="overline" color={colors.textSubtle}>
             TRY SEARCHING
           </AppText>
           <View style={styles.suggestionRow}>
@@ -77,6 +77,10 @@ export default function SearchScreen() {
                 onPress={() => setQuery(suggestion)}
                 accessibilityRole="button"
                 accessibilityLabel={`Search for ${suggestion}`}
+                // The tag itself is ~28px tall; the slop brings the target up
+                // to the 48px minimum.
+                hitSlop={10}
+                style={({ pressed }) => pressed && styles.pressed}
               >
                 <Tag label={suggestion} backgroundColor={colors.surface} />
               </Pressable>
@@ -103,7 +107,7 @@ export default function SearchScreen() {
                 <Tag
                   label={KIND_LABEL[result.kind]}
                   color={KIND_COLOR[result.kind]}
-                  backgroundColor={colors.background}
+                  backgroundColor={colors.surfaceMuted}
                 />
                 <AppText variant="bodyStrong" style={styles.resultTitle}>
                   {result.title}
@@ -117,7 +121,7 @@ export default function SearchScreen() {
                   </AppText>
                 ) : null}
               </View>
-              <Ionicons name="chevron-forward" size={18} color={colors.textSubtle} />
+              <Ionicons name="chevron-forward" size={18} color={colors.textFaint} />
             </Pressable>
           ))}
         </View>
@@ -136,8 +140,10 @@ const styles = StyleSheet.create({
     gap: spacing.md,
     backgroundColor: colors.surface,
     borderRadius: radius.md,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.borderSoft,
     paddingHorizontal: spacing.lg,
-    height: 50,
+    height: 52,
   },
   input: { flex: 1, fontSize: 16, color: colors.text },
   suggestions: { paddingTop: spacing.xxl, gap: spacing.md },
@@ -149,9 +155,12 @@ const styles = StyleSheet.create({
     gap: spacing.lg,
     backgroundColor: colors.surface,
     borderRadius: radius.md,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.borderSoft,
     padding: spacing.lg,
+    minHeight: 76,
   },
   resultText: { flex: 1, gap: spacing.xs, alignItems: 'flex-start' },
   resultTitle: { marginTop: 2 },
-  pressed: { opacity: 0.9 },
+  pressed: { opacity: 0.85 },
 });

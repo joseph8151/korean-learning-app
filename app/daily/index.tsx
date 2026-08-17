@@ -141,7 +141,7 @@ export default function DailyKoreanScreen() {
                   <Ionicons
                     name={savedPhraseIds.includes(phrase.id) ? 'bookmark' : 'bookmark-outline'}
                     size={20}
-                    color={savedPhraseIds.includes(phrase.id) ? colors.accent : colors.textSubtle}
+                    color={savedPhraseIds.includes(phrase.id) ? colors.accentDeep : colors.textSubtle}
                   />
                 </Pressable>
               </View>

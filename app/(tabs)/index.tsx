@@ -9,13 +9,15 @@ import {
   AppText,
   Card,
   ErrorState,
+  GradientCard,
   LoadingState,
   ProgressBar,
   Screen,
   StreakBadge,
 } from '@/components/ui';
-import { colors, radius, spacing } from '@/constants/theme';
+import { colors, onGradient, radius, spacing } from '@/constants/theme';
 import { useAsyncData } from '@/hooks/useAsyncData';
+import { useNow } from '@/hooks/useNow';
 import { usePremiumGate } from '@/hooks/usePremium';
 import { greetingForHour } from '@/lib/date';
 import { findNextLesson, goalProgressRatio } from '@/lib/progress';
@@ -31,9 +33,17 @@ interface HomeData {
   phrase: Awaited<ReturnType<typeof contentService.getTodaysPhrase>>;
 }
 
+const QUICK_ACTIONS = [
+  { emoji: '🔤', label: 'Hangul', tint: colors.primarySoft, href: '/hangul' },
+  { emoji: '🤖', label: 'AI Partner', tint: colors.secondarySoft, href: '/practice/ai-chat' },
+  { emoji: '🎧', label: 'Listening', tint: colors.accentSoft, href: '/practice/listening' },
+  { emoji: '🍜', label: 'Culture', tint: colors.successSoft, href: '/culture' },
+] as const;
+
 export default function HomeScreen() {
   const router = useRouter();
   const { guard } = usePremiumGate();
+  const now = useNow();
 
   const displayName = useUserStore((state) => state.displayName);
   const dailyGoalMinutes = useUserStore((state) => state.dailyGoalMinutes);
@@ -80,6 +90,7 @@ export default function HomeScreen() {
   const next = findNextLesson(data.units, data.lessonsByUnit, lessons);
   const todayMinutes = Math.floor(todaySeconds / 60);
   const goalRatio = goalProgressRatio(todayMinutes, dailyGoalMinutes);
+  const goalMet = goalRatio >= 1;
   const days = visibleStreak(streak);
 
   const openLesson = (lesson: Lesson) =>
@@ -89,11 +100,11 @@ export default function HomeScreen() {
     <Screen>
       <View style={styles.header}>
         <View style={styles.headerText}>
-          <AppText variant="heading">
-            {greetingForHour(new Date().getHours())}, {displayName} 👋
+          <AppText variant="overline" color={colors.textSubtle}>
+            {greetingForHour(now.getHours()).toUpperCase()}
           </AppText>
-          <AppText variant="caption" color={colors.textMuted}>
-            Ready for your Korean today?
+          <AppText variant="title" numberOfLines={1}>
+            {displayName} 👋
           </AppText>
         </View>
 
@@ -101,59 +112,101 @@ export default function HomeScreen() {
           onPress={() => router.push('/search')}
           accessibilityRole="button"
           accessibilityLabel="Search lessons, words and phrases"
-          style={styles.iconButton}
+          style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
           hitSlop={8}
         >
-          <Ionicons name="search" size={22} color={colors.text} />
+          <Ionicons name="search" size={21} color={colors.text} />
         </Pressable>
       </View>
 
+      {next ? (
+        <GradientCard
+          style={styles.hero}
+          onPress={() => openLesson(next.lesson)}
+          accessibilityLabel={`Today's lesson: ${next.lesson.title}, ${next.unit.title}, ${next.lesson.estimatedMinutes} minutes`}
+          accessibilityHint="Opens the lesson"
+        >
+          <AppText variant="overline" color={onGradient.secondary}>
+            TODAY&apos;S LESSON
+          </AppText>
+          <AppText variant="title" color={onGradient.primary} style={styles.heroTitle}>
+            {next.lesson.title}
+          </AppText>
+          <AppText variant="caption" color={onGradient.secondary}>
+            {next.unit.title} · {next.lesson.estimatedMinutes} min
+          </AppText>
+
+          <AppButton
+            label="Start Lesson"
+            size="lg"
+            variant="onColor"
+            style={styles.heroButton}
+            onPress={() => openLesson(next.lesson)}
+            accessibilityHint={`Opens ${next.lesson.title}`}
+          />
+        </GradientCard>
+      ) : (
+        <Card style={styles.hero}>
+          <AppText variant="subheading">You have finished every lesson. 🎉</AppText>
+          <AppText variant="caption" color={colors.textMuted} style={styles.heroTitle}>
+            Keep it warm with a quick drill or a review session.
+          </AppText>
+          <AppButton
+            label="Practise Now"
+            style={styles.heroButton}
+            onPress={() => router.push('/practice/quick-quiz')}
+          />
+        </Card>
+      )}
+
       <Card style={styles.goalCard}>
         <View style={styles.goalHeader}>
-          <View>
-            <AppText variant="micro" color={colors.textMuted}>
+          <View style={styles.goalHeaderText}>
+            <AppText variant="overline" color={colors.textSubtle}>
               DAILY GOAL
             </AppText>
-            <AppText variant="heading">
-              {todayMinutes} / {dailyGoalMinutes} min
-            </AppText>
+            <View style={styles.goalNumbers}>
+              <AppText variant="title">{todayMinutes}</AppText>
+              <AppText variant="caption" color={colors.textMuted} style={styles.goalUnit}>
+                / {dailyGoalMinutes} min
+              </AppText>
+            </View>
           </View>
           <StreakBadge days={days} />
         </View>
 
         <ProgressBar
           ratio={goalRatio}
+          color={goalMet ? colors.success : colors.primary}
+          trackColor={goalMet ? colors.successSoft : colors.primarySoft}
           accessibilityLabel={`Daily goal ${todayMinutes} of ${dailyGoalMinutes} minutes`}
         />
 
-        <AppText variant="caption" color={colors.textMuted} style={styles.goalHint}>
-          {goalRatio >= 1
-            ? "Goal complete. Anything else today is a bonus. 🎉"
-            : `${Math.max(dailyGoalMinutes - todayMinutes, 0)} minutes to go.`}
-        </AppText>
+        <View style={styles.goalHint}>
+          <Ionicons
+            name={goalMet ? 'checkmark-circle' : 'time-outline'}
+            size={15}
+            color={goalMet ? colors.successDeep : colors.textSubtle}
+          />
+          <AppText variant="caption" color={goalMet ? colors.successDeep : colors.textMuted}>
+            {goalMet
+              ? 'Goal complete. Anything else today is a bonus.'
+              : `${Math.max(dailyGoalMinutes - todayMinutes, 0)} minutes to go.`}
+          </AppText>
+        </View>
       </Card>
 
-      {next ? (
-        <Card style={styles.lessonCard}>
-          <AppText variant="micro" color="rgba(255,255,255,0.75)">
-            TODAY&apos;S LESSON
-          </AppText>
-          <AppText variant="title" color={colors.white} style={styles.lessonTitle}>
-            {next.lesson.title}
-          </AppText>
-          <AppText variant="caption" color="rgba(255,255,255,0.85)">
-            {next.unit.title} · {next.lesson.estimatedMinutes} min
-          </AppText>
-          <AppButton
-            label="Start Lesson"
-            size="lg"
-            variant="secondary"
-            style={styles.lessonButton}
-            onPress={() => openLesson(next.lesson)}
-            accessibilityHint={`Opens ${next.lesson.title}`}
+      <View style={styles.quickRow}>
+        {QUICK_ACTIONS.map((action) => (
+          <QuickAction
+            key={action.label}
+            emoji={action.emoji}
+            label={action.label}
+            tint={action.tint}
+            onPress={() => router.push(action.href)}
           />
-        </Card>
-      ) : null}
+        ))}
+      </View>
 
       <View style={styles.section}>
         <DailyKoreanCard
@@ -163,43 +216,6 @@ export default function HomeScreen() {
           onSeeAll={() => router.push('/daily')}
         />
       </View>
-
-      <View style={styles.quickRow}>
-        <QuickAction
-          emoji="🔤"
-          label="Hangul"
-          onPress={() => router.push('/hangul')}
-        />
-        <QuickAction
-          emoji="🤖"
-          label="AI Partner"
-          onPress={() => router.push('/practice/ai-chat')}
-        />
-        <QuickAction
-          emoji="🇰🇷"
-          label="Culture"
-          onPress={() => router.push('/culture')}
-        />
-      </View>
-
-      {next ? (
-        <Pressable
-          onPress={() => openLesson(next.lesson)}
-          accessibilityRole="button"
-          accessibilityLabel={`Continue learning: ${next.unit.title}, ${next.lesson.title}`}
-          style={styles.continue}
-        >
-          <View style={styles.continueText}>
-            <AppText variant="micro" color={colors.textMuted}>
-              CONTINUE LEARNING
-            </AppText>
-            <AppText variant="bodyStrong">
-              {next.unit.title} · {next.lesson.title}
-            </AppText>
-          </View>
-          <Ionicons name="chevron-forward" size={20} color={colors.primary} />
-        </Pressable>
-      ) : null}
     </Screen>
   );
 }
@@ -207,10 +223,12 @@ export default function HomeScreen() {
 function QuickAction({
   emoji,
   label,
+  tint,
   onPress,
 }: {
   emoji: string;
   label: string;
+  tint: string;
   onPress: () => void;
 }) {
   return (
@@ -220,8 +238,10 @@ function QuickAction({
       accessibilityLabel={label}
       style={({ pressed }) => [styles.quickAction, pressed && styles.pressed]}
     >
-      <AppText variant="heading">{emoji}</AppText>
-      <AppText variant="micro" color={colors.textMuted}>
+      <View style={[styles.quickIcon, { backgroundColor: tint }]}>
+        <AppText variant="subheading">{emoji}</AppText>
+      </View>
+      <AppText variant="micro" color={colors.textMuted} center numberOfLines={1}>
         {label}
       </AppText>
     </Pressable>
@@ -236,48 +256,58 @@ const styles = StyleSheet.create({
     paddingTop: spacing.lg,
     gap: spacing.lg,
   },
-  headerText: { flex: 1, gap: 2 },
+  headerText: { flex: 1, gap: spacing.xs },
   iconButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 46,
+    height: 46,
+    borderRadius: radius.md,
     backgroundColor: colors.surface,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.borderSoft,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  goalCard: { marginTop: spacing.xl },
+  hero: { marginTop: spacing.xl },
+  heroTitle: { marginTop: spacing.xs, marginBottom: spacing.xs },
+  heroButton: { marginTop: spacing.xl },
+  goalCard: { marginTop: spacing.lg },
   goalHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    gap: spacing.md,
     marginBottom: spacing.lg,
   },
-  goalHint: { marginTop: spacing.md },
-  lessonCard: { marginTop: spacing.lg, backgroundColor: colors.primary },
-  lessonTitle: { marginTop: spacing.xs },
-  lessonButton: { marginTop: spacing.xl },
-  section: { marginTop: spacing.lg },
-  quickRow: { flexDirection: 'row', gap: spacing.md, marginTop: spacing.lg },
+  goalHeaderText: { flex: 1, gap: spacing.xs },
+  goalNumbers: { flexDirection: 'row', alignItems: 'baseline', gap: spacing.xs },
+  goalUnit: { paddingBottom: 2 },
+  goalHint: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginTop: spacing.md,
+  },
+  quickRow: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.lg },
   quickAction: {
     flex: 1,
     backgroundColor: colors.surface,
     borderRadius: radius.md,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.borderSoft,
     paddingVertical: spacing.lg,
+    paddingHorizontal: spacing.xs,
     alignItems: 'center',
-    gap: spacing.xs,
-    minHeight: 84,
+    gap: spacing.sm,
+    minHeight: 96,
     justifyContent: 'center',
   },
-  pressed: { opacity: 0.85 },
-  continue: {
-    flexDirection: 'row',
+  quickIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: radius.sm,
     alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: colors.primarySoft,
-    borderRadius: radius.md,
-    padding: spacing.lg,
-    marginTop: spacing.lg,
-    minHeight: 68,
+    justifyContent: 'center',
   },
-  continueText: { flex: 1, gap: 2 },
+  pressed: { opacity: 0.9, transform: [{ scale: 0.985 }] },
+  section: { marginTop: spacing.lg },
 });

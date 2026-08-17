@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { AppText } from '@/components/ui';
 import { APP_NAME } from '@/constants/app';
-import { colors, radius, spacing } from '@/constants/theme';
+import { colors, gradients, onGradient, radius, shadow, spacing } from '@/constants/theme';
 
 export interface BrandMarkProps {
   tagline?: string;
@@ -12,22 +12,27 @@ export interface BrandMarkProps {
 export function BrandMark({ tagline = 'Speak Korean.\nLive Korea.' }: BrandMarkProps) {
   return (
     <LinearGradient
-      colors={[colors.primary, '#8A6BFF', colors.accent]}
+      colors={gradients.dusk}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.root}
     >
       <View style={styles.logo}>
-        <AppText variant="title" color={colors.primary}>
+        <AppText style={styles.glyph} color={colors.primaryDeep}>
           한
         </AppText>
       </View>
 
-      <AppText variant="display" color={colors.white} style={styles.name}>
+      <AppText variant="display" color={onGradient.primary} style={styles.name}>
         {APP_NAME}
       </AppText>
 
-      <AppText variant="body" color="rgba(255,255,255,0.9)" center style={styles.tagline}>
+      {/*
+        The wordmark and tagline are centred on purpose: the diagonal sweep is
+        light enough at the bottom-right corner that white text would drop
+        below 4.5:1 if it ran the full width.
+      */}
+      <AppText variant="body" color={onGradient.secondary} center style={styles.tagline}>
         {tagline}
       </AppText>
     </LinearGradient>
@@ -37,13 +42,15 @@ export function BrandMark({ tagline = 'Speak Korean.\nLive Korea.' }: BrandMarkP
 const styles = StyleSheet.create({
   root: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
   logo: {
-    width: 88,
-    height: 88,
+    width: 96,
+    height: 96,
     borderRadius: radius.xl,
     backgroundColor: colors.white,
     alignItems: 'center',
     justifyContent: 'center',
+    ...shadow.floating,
   },
-  name: { marginTop: spacing.xl, letterSpacing: -0.5 },
-  tagline: { marginTop: spacing.sm },
+  glyph: { fontSize: 40, lineHeight: 52, fontWeight: '800' },
+  name: { marginTop: spacing.xl },
+  tagline: { marginTop: spacing.sm, maxWidth: 280 },
 });

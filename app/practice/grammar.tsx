@@ -91,7 +91,7 @@ export default function GrammarPracticeScreen() {
         {GRAMMAR_POINTS.map((point) => (
           <Card key={point.id} style={styles.card}>
             <AppText variant="korean">{point.pattern}</AppText>
-            <AppText variant="bodyStrong" color={colors.primary}>
+            <AppText variant="bodyStrong" color={colors.primaryDark}>
               {point.meaning}
             </AppText>
             <AppText variant="caption" color={colors.textMuted} style={styles.explanation}>

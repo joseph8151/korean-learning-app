@@ -1,11 +1,19 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { Children, cloneElement, isValidElement, useState } from 'react';
 import { Alert, Linking, Pressable, StyleSheet, View } from 'react-native';
 
-import { AppButton, AppText, Card, PremiumBadge, Screen, SectionHeader } from '@/components/ui';
+import {
+  AppButton,
+  AppText,
+  Card,
+  GradientCard,
+  PremiumBadge,
+  Screen,
+  SectionHeader,
+} from '@/components/ui';
 import { LEARNING_GOAL_OPTIONS, PRIVACY_URL, SUPPORT_EMAIL, TERMS_URL } from '@/constants/app';
-import { colors, radius, spacing } from '@/constants/theme';
+import { colors, onGradient, radius, spacing } from '@/constants/theme';
 import { useIsPremium } from '@/hooks/usePremium';
 import { authService } from '@/services/auth';
 import { syncService } from '@/services/sync';
@@ -86,7 +94,7 @@ export default function ProfileScreen() {
 
       <Card style={styles.identity}>
         <View style={styles.avatar}>
-          <AppText variant="title" color={colors.primary}>
+          <AppText variant="title" color={colors.primaryDark}>
             {displayName.slice(0, 1).toUpperCase()}
           </AppText>
         </View>
@@ -112,22 +120,23 @@ export default function ProfileScreen() {
       ) : null}
 
       {!isPremium ? (
-        <Pressable
+        <GradientCard
           onPress={() => router.push('/paywall')}
-          accessibilityRole="button"
-          accessibilityLabel="See KoreanGo Premium plans"
-          style={({ pressed }) => [styles.premiumBanner, pressed && styles.pressed]}
+          accessibilityLabel="Go Premium. All courses, AI conversations and speaking practice."
+          accessibilityHint="Opens the KoreanGo Premium plans"
+          style={styles.premiumBanner}
+          contentStyle={styles.premiumContent}
         >
           <View style={styles.premiumText}>
-            <AppText variant="subheading" color={colors.white}>
+            <AppText variant="subheading" color={onGradient.primary}>
               Go Premium ✦
             </AppText>
-            <AppText variant="caption" color="rgba(255,255,255,0.85)">
+            <AppText variant="caption" color={onGradient.secondary}>
               All courses, AI conversations and speaking practice.
             </AppText>
           </View>
           <Ionicons name="chevron-forward" size={20} color={colors.white} />
-        </Pressable>
+        </GradientCard>
       ) : null}
 
       <Section title="Learning">
@@ -184,31 +193,38 @@ export default function ProfileScreen() {
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  const rows = Children.toArray(children);
+
   return (
     <View style={styles.section}>
-      <AppText variant="micro" color={colors.textMuted} style={styles.sectionTitle}>
+      <AppText variant="overline" color={colors.textSubtle} style={styles.sectionTitle}>
         {title.toUpperCase()}
       </AppText>
-      <View style={styles.sectionBody}>{children}</View>
+      <View style={styles.sectionBody}>
+        {rows.map((row, index) =>
+          // The separator belongs *between* rows. Left on every row, the last
+          // one draws a stray line just inside the container's rounded edge.
+          isValidElement<RowProps>(row) ? cloneElement(row, { last: index === rows.length - 1 }) : row,
+        )}
+      </View>
     </View>
   );
 }
 
-function Row({
-  label,
-  value,
-  onPress,
-}: {
+interface RowProps {
   label: string;
   value: string;
   onPress: () => void;
-}) {
+  last?: boolean;
+}
+
+function Row({ label, value, onPress, last = false }: RowProps) {
   return (
     <Pressable
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={value ? `${label}: ${value}` : label}
-      style={({ pressed }) => [styles.row, pressed && styles.pressed]}
+      style={({ pressed }) => [styles.row, last && styles.rowLast, pressed && styles.rowPressed]}
     >
       <AppText variant="body" style={styles.rowLabel}>
         {label}
@@ -218,7 +234,7 @@ function Row({
           {value}
         </AppText>
       ) : null}
-      <Ionicons name="chevron-forward" size={18} color={colors.textSubtle} />
+      <Ionicons name="chevron-forward" size={18} color={colors.textFaint} />
     </Pressable>
   );
 }
@@ -237,15 +253,8 @@ const styles = StyleSheet.create({
   identityText: { flex: 1, gap: 2 },
   saveCard: { marginTop: spacing.lg, gap: spacing.sm },
   saveText: { marginBottom: spacing.md },
-  premiumBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.lg,
-    backgroundColor: colors.primary,
-    borderRadius: radius.xl,
-    padding: spacing.xl,
-    marginTop: spacing.lg,
-  },
+  premiumBanner: { marginTop: spacing.lg },
+  premiumContent: { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
   premiumText: { flex: 1, gap: 2 },
   pressed: { opacity: 0.9 },
   section: { marginTop: spacing.xxl },
@@ -253,6 +262,8 @@ const styles = StyleSheet.create({
   sectionBody: {
     backgroundColor: colors.surface,
     borderRadius: radius.md,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.borderSoft,
     overflow: 'hidden',
   },
   row: {
@@ -264,6 +275,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.border,
   },
+  rowLast: { borderBottomWidth: 0 },
+  rowPressed: { backgroundColor: colors.surfaceMuted },
   rowLabel: { flex: 1 },
   rowValue: { maxWidth: '50%', textAlign: 'right' },
   footer: { marginTop: spacing.xxl, gap: spacing.sm },

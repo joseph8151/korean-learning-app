@@ -104,8 +104,8 @@ export function AuthForm({ mode, busy, errorMessage, onSubmit }: AuthFormProps) 
 
       {message ? (
         <View style={styles.error} accessibilityLiveRegion="polite">
-          <Ionicons name="alert-circle-outline" size={16} color={colors.danger} />
-          <AppText variant="caption" color={colors.danger} style={styles.errorText}>
+          <Ionicons name="alert-circle-outline" size={16} color={colors.dangerDeep} />
+          <AppText variant="caption" color={colors.dangerDeep} style={styles.errorText}>
             {message}
           </AppText>
         </View>

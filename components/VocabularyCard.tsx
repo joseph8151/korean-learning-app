@@ -81,9 +81,9 @@ export function VocabularyCard({
           <Ionicons
             name={saved ? 'bookmark' : 'bookmark-outline'}
             size={20}
-            color={saved ? colors.accent : colors.textSubtle}
+            color={saved ? colors.accentDeep : colors.textSubtle}
           />
-          <AppText variant="caption" color={saved ? colors.accent : colors.textMuted}>
+          <AppText variant="caption" color={saved ? colors.accentDeep : colors.textMuted}>
             {saved ? 'Saved' : 'Save'}
           </AppText>
         </Pressable>

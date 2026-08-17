@@ -91,7 +91,7 @@ export default function LessonCompleteScreen() {
 
         {unlocked.length > 0 ? (
           <Card style={styles.achievements}>
-            <AppText variant="micro" color={colors.primary}>
+            <AppText variant="overline" color={colors.primaryDark}>
               NEW ACHIEVEMENT{unlocked.length > 1 ? 'S' : ''}
             </AppText>
             {unlocked.map((achievement) => (
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
   content: { flex: 1, justifyContent: 'center', gap: spacing.md, paddingVertical: spacing.xxl },
   emoji: { fontSize: 72, lineHeight: 84, textAlign: 'center' },
   stats: { flexDirection: 'row', gap: spacing.md, marginTop: spacing.xl },
-  stat: { flex: 1, borderRadius: radius.md, paddingVertical: spacing.lg, gap: 2 },
+  stat: { flex: 1, borderRadius: radius.md, paddingVertical: spacing.lg, gap: spacing.xs },
   signUp: { marginTop: spacing.lg, gap: spacing.sm },
   signUpButton: { marginTop: spacing.md },
   achievements: { marginTop: spacing.lg, gap: spacing.lg },

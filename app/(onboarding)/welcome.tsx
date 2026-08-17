@@ -1,7 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
 import {
-  Dimensions,
   FlatList,
   Pressable,
   StyleSheet,
@@ -52,17 +51,22 @@ const SLIDES: Slide[] = [
   },
 ];
 
-const { width } = Dimensions.get('window');
-
 export default function WelcomeScreen() {
   const router = useRouter();
   const [index, setIndex] = useState(0);
+  // Measured rather than taken from `Dimensions.get('window')` at module load.
+  // The list sits inside the screen's max-width container, so on a tablet the
+  // window is wider than the list, and a module-scope value also never updates
+  // on rotation or in split screen — both broke paging.
+  const [slideWidth, setSlideWidth] = useState(0);
   const listRef = useRef<FlatList<Slide>>(null);
 
   const isLast = index === SLIDES.length - 1;
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const next = Math.round(event.nativeEvent.contentOffset.x / event.nativeEvent.layoutMeasurement.width);
+    const pageWidth = event.nativeEvent.layoutMeasurement.width;
+    if (pageWidth <= 0) return;
+    const next = Math.round(event.nativeEvent.contentOffset.x / pageWidth);
     if (next !== index) setIndex(next);
   };
 
@@ -109,8 +113,16 @@ export default function WelcomeScreen() {
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         onMomentumScrollEnd={handleScroll}
+        onLayout={(event) => setSlideWidth(event.nativeEvent.layout.width)}
+        // Recomputing the offsets from the measured width keeps paging exact
+        // when the container resizes.
+        getItemLayout={(_, itemIndex) => ({
+          length: slideWidth,
+          offset: slideWidth * itemIndex,
+          index: itemIndex,
+        })}
         renderItem={({ item }) => (
-          <View style={[styles.slide, { width }]}>
+          <View style={[styles.slide, { width: slideWidth }]}>
             <View style={[styles.art, { backgroundColor: item.tint }]}>
               <AppText style={styles.emoji}>{item.emoji}</AppText>
             </View>
@@ -144,24 +156,25 @@ const styles = StyleSheet.create({
     gap: spacing.lg,
   },
   art: {
-    width: 200,
-    height: 200,
+    width: 208,
+    height: 208,
     borderRadius: radius.xl * 2,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.xl,
   },
-  emoji: { fontSize: 84, lineHeight: 96 },
+  emoji: { fontSize: 88, lineHeight: 100 },
   title: { paddingHorizontal: spacing.lg },
   body: { maxWidth: 320 },
   dots: {
     flexDirection: 'row',
     justifyContent: 'center',
+    alignItems: 'center',
     gap: spacing.sm,
     paddingVertical: spacing.xl,
   },
-  dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.border },
-  dotActive: { width: 24, backgroundColor: colors.primary },
+  dot: { width: 7, height: 7, borderRadius: radius.pill, backgroundColor: colors.border },
+  dotActive: { width: 26, height: 7, backgroundColor: colors.primary },
   footer: { gap: spacing.md },
   skip: { alignSelf: 'center', padding: spacing.sm },
 });

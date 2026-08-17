@@ -210,7 +210,7 @@ export default function LessonScreen() {
         </AppText>
       </View>
 
-      <AppText variant="micro" color={colors.textSubtle} style={styles.lessonName}>
+      <AppText variant="overline" color={colors.textSubtle} style={styles.lessonName}>
         {data.lesson.title.toUpperCase()}
       </AppText>
 
@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
   },
   close: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
   progress: { flex: 1 },
-  lessonName: { marginTop: spacing.lg, letterSpacing: 1 },
+  lessonName: { marginTop: spacing.lg },
   body: { paddingTop: spacing.lg },
   footer: { gap: spacing.lg },
 });

@@ -107,7 +107,7 @@ export default function HangulScreen() {
           </View>
 
           <View style={styles.tip}>
-            <AppText variant="caption" color={colors.warning}>
+            <AppText variant="caption" color={colors.warningDeep}>
               💡 {selected.tip}
             </AppText>
           </View>

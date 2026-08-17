@@ -42,7 +42,7 @@ export function AudioButton({
     >
       <Ionicons name={slow ? 'play-outline' : 'volume-high'} size={18} color={colors.primary} />
       {compact ? null : (
-        <AppText variant="caption" color={colors.primary}>
+        <AppText variant="caption" color={colors.primaryDark}>
           {label}
         </AppText>
       )}

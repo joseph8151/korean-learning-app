@@ -16,7 +16,7 @@ export function DailyKoreanCard({ phrase, saved, onToggleSave, onSeeAll }: Daily
   return (
     <Card>
       <View style={styles.header}>
-        <AppText variant="micro" color={colors.accent}>
+        <AppText variant="overline" color={colors.accentDeep}>
           DAILY KOREAN
         </AppText>
         {onSeeAll ? (
@@ -26,7 +26,7 @@ export function DailyKoreanCard({ phrase, saved, onToggleSave, onSeeAll }: Daily
             accessibilityLabel="See all daily Korean phrases"
             hitSlop={8}
           >
-            <AppText variant="micro" color={colors.primary}>
+            <AppText variant="micro" color={colors.primaryDark}>
               See all →
             </AppText>
           </Pressable>
@@ -34,7 +34,7 @@ export function DailyKoreanCard({ phrase, saved, onToggleSave, onSeeAll }: Daily
           <Tag
             label={phrase.category.toUpperCase()}
             backgroundColor={colors.accentSoft}
-            color={colors.accent}
+            color={colors.accentDeep}
           />
         )}
       </View>
@@ -63,9 +63,9 @@ export function DailyKoreanCard({ phrase, saved, onToggleSave, onSeeAll }: Daily
           <Ionicons
             name={saved ? 'bookmark' : 'bookmark-outline'}
             size={18}
-            color={saved ? colors.accent : colors.textSubtle}
+            color={saved ? colors.accentDeep : colors.textSubtle}
           />
-          <AppText variant="caption" color={saved ? colors.accent : colors.textMuted}>
+          <AppText variant="caption" color={saved ? colors.accentDeep : colors.textMuted}>
             {saved ? 'Saved' : 'Save'}
           </AppText>
         </Pressable>

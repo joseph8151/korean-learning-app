@@ -19,8 +19,25 @@ export function daysBetween(fromKey: string, toKey: string): number {
   return Math.round((to - from) / MS_PER_DAY);
 }
 
+/**
+ * Adds whole days, preserving the wall-clock time of day.
+ *
+ * Deliberately not `time + days * MS_PER_DAY`: a day that gains or loses an
+ * hour to daylight saving is not 86,400,000 ms long, so the arithmetic version
+ * lands on 23:00 the day before and `toDateKey` then reports the wrong
+ * calendar date. `setDate` overflows across month and year ends on its own.
+ */
 export function addDays(date: Date, days: number): Date {
-  return new Date(date.getTime() + days * MS_PER_DAY);
+  const result = new Date(date.getTime());
+  result.setDate(result.getDate() + days);
+  return result;
+}
+
+const WEEKDAY_INITIALS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'] as const;
+
+/** Single-letter weekday for a YYYY-MM-DD key, for compact chart axes. */
+export function weekdayInitial(key: string): string {
+  return WEEKDAY_INITIALS[fromDateKey(key).getDay()];
 }
 
 export function formatMinutes(seconds: number): string {

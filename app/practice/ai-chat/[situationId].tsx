@@ -181,7 +181,7 @@ export default function AIChatScreen() {
 
       {showHint && hint ? (
         <View style={styles.hint}>
-          <AppText variant="micro" color={colors.warning}>
+          <AppText variant="micro" color={colors.warningDeep}>
             TRY SAYING
           </AppText>
           <Pressable
@@ -280,7 +280,7 @@ function MessageBubble({
 
         {message.suggestion ? (
           <View style={styles.suggestion}>
-            <AppText variant="micro" color={colors.success}>
+            <AppText variant="micro" color={colors.successDeep}>
               MORE NATURAL
             </AppText>
             <AppText variant="caption">{message.suggestion.korean}</AppText>

@@ -40,7 +40,7 @@ export function AnswerFeedback({ isCorrect, correctAnswer, seed }: AnswerFeedbac
       <AppText variant="heading">{isCorrect ? '🎉' : '💪'}</AppText>
 
       <View style={styles.text}>
-        <AppText variant="bodyStrong" color={isCorrect ? colors.success : colors.warning}>
+        <AppText variant="bodyStrong" color={isCorrect ? colors.successDeep : colors.warningDeep}>
           {message}
         </AppText>
         {!isCorrect ? (

@@ -1,13 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { Alert, Linking, Pressable, StyleSheet, View } from 'react-native';
 
-import { AppButton, AppText, Screen } from '@/components/ui';
+import { AppButton, AppText, GradientCard, Screen } from '@/components/ui';
 import { PRIVACY_URL, TERMS_URL } from '@/constants/app';
 import { PREMIUM_BENEFITS, PRICING_PLANS, type PricingPlan } from '@/constants/pricing';
-import { colors, radius, spacing } from '@/constants/theme';
+import { colors, onGradient, radius, shadow, spacing } from '@/constants/theme';
 import { paymentService, type StorePrice } from '@/services/payments';
 import { useUserStore } from '@/store/useUserStore';
 
@@ -91,7 +90,7 @@ export default function PaywallScreen() {
             loading={busy}
             onPress={handlePurchase}
           />
-          <AppText variant="micro" color={colors.textSubtle} center>
+          <AppText variant="micro" color={colors.textMuted} center>
             {selected.trialDays > 0
               ? `${selected.trialDays} days free, then ${priceLabelFor(selected)} ${selected.periodLabel}. Cancel anytime.`
               : 'One payment. Yours forever.'}
@@ -136,22 +135,17 @@ export default function PaywallScreen() {
         </Pressable>
       </View>
 
-      <LinearGradient
-        colors={[colors.primary, '#8A6BFF']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.hero}
-      >
-        <AppText variant="micro" color="rgba(255,255,255,0.8)">
+      <GradientCard style={styles.hero}>
+        <AppText variant="overline" color={onGradient.secondary}>
           KOREANGO PREMIUM
         </AppText>
-        <AppText variant="title" color={colors.white} style={styles.heroTitle}>
+        <AppText variant="title" color={onGradient.primary} style={styles.heroTitle}>
           Speak Korean With Confidence
         </AppText>
-        <AppText variant="body" color="rgba(255,255,255,0.9)">
+        <AppText variant="body" color={onGradient.secondary}>
           Unlock your complete Korean learning experience.
         </AppText>
-      </LinearGradient>
+      </GradientCard>
 
       <View style={styles.benefits}>
         {PREMIUM_BENEFITS.map((benefit) => (
@@ -206,7 +200,7 @@ export default function PaywallScreen() {
                   </View>
                 ) : null}
                 <AppText variant="bodyStrong">{priceLabelFor(plan)}</AppText>
-                <AppText variant="micro" color={colors.textSubtle}>
+                <AppText variant="micro" color={colors.textMuted}>
                   {plan.periodLabel}
                 </AppText>
               </View>
@@ -221,13 +215,13 @@ export default function PaywallScreen() {
 const styles = StyleSheet.create({
   header: { flexDirection: 'row', justifyContent: 'flex-end', paddingTop: spacing.lg },
   close: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
-  hero: { borderRadius: radius.xl, padding: spacing.xl, gap: spacing.xs, marginTop: spacing.sm },
-  heroTitle: { marginTop: spacing.xs },
+  hero: { marginTop: spacing.sm },
+  heroTitle: { marginTop: spacing.xs, marginBottom: spacing.xs },
   benefits: { gap: spacing.lg, marginTop: spacing.xxl },
   benefit: { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
   benefitEmoji: {
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
     borderRadius: radius.sm,
     backgroundColor: colors.primarySoft,
     alignItems: 'center',
@@ -244,9 +238,13 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: colors.border,
     padding: spacing.lg,
-    minHeight: 72,
+    minHeight: 76,
   },
-  planSelected: { borderColor: colors.primary, backgroundColor: colors.primarySoft },
+  planSelected: {
+    borderColor: colors.primary,
+    backgroundColor: colors.primaryTint,
+    ...shadow.card,
+  },
   planLeft: { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
   radio: {
     width: 24,

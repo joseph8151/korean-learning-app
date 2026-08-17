@@ -14,7 +14,7 @@ export function SectionHeader({ title, subtitle, actionLabel, onAction }: Sectio
   return (
     <View style={styles.row}>
       <View style={styles.text}>
-        <AppText variant="heading">{title}</AppText>
+        <AppText variant="title">{title}</AppText>
         {subtitle ? (
           <AppText variant="caption" color={colors.textMuted} style={styles.subtitle}>
             {subtitle}
@@ -28,8 +28,9 @@ export function SectionHeader({ title, subtitle, actionLabel, onAction }: Sectio
           accessibilityRole="button"
           accessibilityLabel={actionLabel}
           hitSlop={12}
+          style={({ pressed }) => pressed && styles.pressed}
         >
-          <AppText variant="caption" color={colors.primary}>
+          <AppText variant="caption" color={colors.primaryDark} style={styles.action}>
             {actionLabel}
           </AppText>
         </Pressable>
@@ -46,5 +47,7 @@ const styles = StyleSheet.create({
     gap: spacing.lg,
   },
   text: { flex: 1 },
-  subtitle: { marginTop: 2 },
+  subtitle: { marginTop: spacing.xs },
+  action: { fontWeight: '700' },
+  pressed: { opacity: 0.6 },
 });

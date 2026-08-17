@@ -1,8 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
-import type { ColorValue } from 'react-native';
+import { StyleSheet, View, type ColorValue } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { colors, typography } from '@/constants/theme';
+import { colors, layout, radius, typography } from '@/constants/theme';
 
 type IconName = keyof typeof Ionicons.glyphMap;
 
@@ -16,27 +17,43 @@ function tabIcon(focused: IconName, unfocused: IconName) {
     size: number;
     focused: boolean;
   }) {
-    return <Ionicons name={isFocused ? focused : unfocused} size={size} color={color} />;
+    return (
+      <View style={styles.iconWrap}>
+        <View style={[styles.pill, isFocused && styles.pillActive]} />
+        <Ionicons name={isFocused ? focused : unfocused} size={size - 2} color={color} />
+      </View>
+    );
   }
 
   return TabBarIcon;
 }
 
 export default function TabsLayout() {
+  const insets = useSafeAreaInsets();
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: colors.primary,
+        tabBarActiveTintColor: colors.primaryDeep,
         tabBarInactiveTintColor: colors.textSubtle,
         tabBarStyle: {
           backgroundColor: colors.surface,
-          borderTopColor: colors.border,
-          height: 64,
-          paddingBottom: 8,
-          paddingTop: 6,
+          borderTopColor: colors.borderSoft,
+          borderTopWidth: StyleSheet.hairlineWidth,
+          // Add the device's bottom inset explicitly. Setting an explicit
+          // height overrides React Navigation's own inset handling, so without
+          // this the labels sit underneath the Android gesture bar.
+          height: layout.tabBarHeight + insets.bottom,
+          paddingBottom: insets.bottom + 6,
+          paddingTop: 8,
         },
-        tabBarLabelStyle: { fontSize: typography.micro.fontSize, fontWeight: '600' },
+        tabBarLabelStyle: {
+          fontSize: typography.micro.fontSize,
+          fontWeight: '700',
+          marginTop: 2,
+        },
+        tabBarItemStyle: { paddingTop: 2 },
       }}
     >
       <Tabs.Screen
@@ -62,3 +79,19 @@ export default function TabsLayout() {
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  iconWrap: { alignItems: 'center', justifyContent: 'center' },
+  // A short bar above the active icon. Selection is already carried by the
+  // tint and the accessibility state, so this is reinforcement, not the only
+  // signal.
+  pill: {
+    position: 'absolute',
+    top: -8,
+    width: 18,
+    height: 3,
+    borderRadius: radius.pill,
+    backgroundColor: 'transparent',
+  },
+  pillActive: { backgroundColor: colors.primary },
+});

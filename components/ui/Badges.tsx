@@ -10,15 +10,21 @@ export interface StreakBadgeProps {
 }
 
 export function StreakBadge({ days, compact = false, style }: StreakBadgeProps) {
-  const label = compact ? `${days}` : `${days} Day Streak`;
+  const label = compact ? `${days}` : `${days} day streak`;
+  // A zero streak in warm amber reads as an achievement it is not.
+  const active = days > 0;
 
   return (
     <View
-      style={[styles.badge, { backgroundColor: colors.secondarySoft }, style]}
-      accessibilityLabel={`${days} day streak`}
+      style={[
+        styles.badge,
+        { backgroundColor: active ? colors.secondarySoft : colors.surfaceMuted },
+        style,
+      ]}
+      accessibilityLabel={days === 1 ? '1 day streak' : `${days} day streak`}
     >
-      <AppText variant="micro" color={colors.warning}>
-        🔥 {label}
+      <AppText variant="micro" color={active ? colors.warningDeep : colors.textSubtle}>
+        {active ? '🔥' : '·'} {label}
       </AppText>
     </View>
   );
@@ -32,7 +38,7 @@ export interface PremiumBadgeProps {
 export function PremiumBadge({ label = 'PREMIUM', style }: PremiumBadgeProps) {
   return (
     <View style={[styles.badge, { backgroundColor: colors.primarySoft }, style]}>
-      <AppText variant="micro" color={colors.primary}>
+      <AppText variant="micro" color={colors.primaryDeep}>
         ✦ {label}
       </AppText>
     </View>
@@ -49,7 +55,7 @@ export interface TagProps {
 export function Tag({
   label,
   color = colors.textMuted,
-  backgroundColor = colors.background,
+  backgroundColor = colors.surfaceMuted,
   style,
 }: TagProps) {
   return (

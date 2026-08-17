@@ -4,8 +4,15 @@ import { useCallback } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { CourseCard } from '@/components/CourseCard';
-import { AppText, ErrorState, LoadingState, Screen, SectionHeader } from '@/components/ui';
-import { colors, radius, spacing } from '@/constants/theme';
+import {
+  AppText,
+  ErrorState,
+  GradientCard,
+  LoadingState,
+  Screen,
+  SectionHeader,
+} from '@/components/ui';
+import { colors, onGradient, radius, spacing } from '@/constants/theme';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { usePremiumGate } from '@/hooks/usePremium';
 import { contentService } from '@/services/content';
@@ -68,25 +75,28 @@ export default function LearnScreen() {
         </Pressable>
       </View>
 
-      <Pressable
+      <GradientCard
+        gradient="dusk"
+        direction="horizontal"
         onPress={() => router.push('/hangul')}
-        accessibilityRole="button"
-        accessibilityLabel="Open the Hangul trainer"
-        style={({ pressed }) => [styles.hangulBanner, pressed && styles.pressed]}
+        accessibilityLabel="Read Hangul in one sitting. Consonants, vowels and batchim with audio."
+        accessibilityHint="Opens the Hangul trainer"
+        style={styles.bannerWrap}
+        contentStyle={styles.hangulBanner}
       >
         <View style={styles.hangulText}>
-          <AppText variant="micro" color="rgba(255,255,255,0.8)">
+          <AppText variant="overline" color={onGradient.secondary}>
             START HERE
           </AppText>
-          <AppText variant="subheading" color={colors.white}>
+          <AppText variant="subheading" color={onGradient.primary} style={styles.hangulTitle}>
             Read Hangul in one sitting
           </AppText>
-          <AppText variant="caption" color="rgba(255,255,255,0.85)">
+          <AppText variant="caption" color={onGradient.secondary}>
             Consonants, vowels and batchim with audio.
           </AppText>
         </View>
-        <AppText style={styles.hangulEmoji}>한</AppText>
-      </Pressable>
+        <AppText style={styles.hangulGlyph}>한</AppText>
+      </GradientCard>
 
       <View style={styles.list}>
         {data.courses.map((course) => {
@@ -123,20 +133,22 @@ const styles = StyleSheet.create({
     gap: spacing.md,
     backgroundColor: colors.surface,
     borderRadius: radius.md,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.borderSoft,
     paddingHorizontal: spacing.lg,
-    height: 50,
+    height: 52,
   },
   hangulBanner: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.accent,
-    borderRadius: radius.xl,
-    padding: spacing.xl,
-    marginTop: spacing.xl,
     gap: spacing.lg,
   },
+  // The gradient runs left to right and only its left two thirds are dark
+  // enough for white body text, so the copy is capped there and the glyph
+  // takes the bright coral end.
   hangulText: { flex: 1, gap: 2 },
-  hangulEmoji: { fontSize: 46, lineHeight: 56, color: 'rgba(255,255,255,0.85)' },
-  pressed: { opacity: 0.9 },
+  hangulTitle: { marginTop: spacing.xs, marginBottom: 2 },
+  hangulGlyph: { fontSize: 52, lineHeight: 62, fontWeight: '800', color: 'rgba(255,255,255,0.9)' },
+  bannerWrap: { marginTop: spacing.xl },
   list: { gap: spacing.lg, paddingTop: spacing.xl },
 });

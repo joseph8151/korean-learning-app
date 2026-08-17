@@ -45,7 +45,7 @@ export function LessonCard({ lesson, status, locked, onPress }: LessonCardProps)
         <Ionicons
           name={isComplete ? 'checkmark' : locked ? 'lock-closed' : iconByType[lesson.lessonType]}
           size={20}
-          color={isComplete ? colors.success : locked ? colors.textSubtle : colors.primary}
+          color={isComplete ? colors.successDeep : locked ? colors.textSubtle : colors.primary}
         />
       </View>
 
@@ -62,11 +62,11 @@ export function LessonCard({ lesson, status, locked, onPress }: LessonCardProps)
       </View>
 
       <View style={styles.meta}>
-        <AppText variant="micro" color={colors.textSubtle}>
+        <AppText variant="micro" color={colors.textMuted}>
           {lesson.estimatedMinutes} min
         </AppText>
         {isComplete ? (
-          <AppText variant="micro" color={colors.success}>
+          <AppText variant="micro" color={colors.successDeep}>
             Done
           </AppText>
         ) : null}
@@ -82,14 +82,16 @@ const styles = StyleSheet.create({
     gap: spacing.lg,
     backgroundColor: colors.surface,
     borderRadius: radius.md,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.borderSoft,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.lg,
-    minHeight: 72,
+    minHeight: 76,
   },
-  pressed: { opacity: 0.9 },
+  pressed: { opacity: 0.92, transform: [{ scale: 0.99 }] },
   iconBox: {
-    width: 44,
-    height: 44,
+    width: 46,
+    height: 46,
     borderRadius: radius.sm,
     backgroundColor: colors.primarySoft,
     alignItems: 'center',

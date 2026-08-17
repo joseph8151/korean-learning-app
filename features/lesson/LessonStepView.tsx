@@ -80,7 +80,7 @@ export function LessonStepView({ block, vocabulary }: LessonStepViewProps) {
 
           {note ? (
             <View style={styles.note}>
-              <AppText variant="caption" color={colors.warning}>
+              <AppText variant="caption" color={colors.warningDeep}>
                 💡 {note}
               </AppText>
             </View>
@@ -99,7 +99,7 @@ export function LessonStepView({ block, vocabulary }: LessonStepViewProps) {
           <View style={styles.points}>
             {points.map((point) => (
               <View key={point} style={styles.point}>
-                <AppText variant="body" color={colors.primary}>
+                <AppText variant="body" color={colors.primaryDark}>
                   ✓
                 </AppText>
                 <AppText variant="body" style={styles.pointText}>

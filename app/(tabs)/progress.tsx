@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { AppText, Card, ProgressBar, Screen, SectionHeader, StreakBadge } from '@/components/ui';
 import { ACHIEVEMENTS } from '@/constants/content';
 import { colors, radius, spacing } from '@/constants/theme';
-import { formatMinutes, lastSevenDayKeys } from '@/lib/date';
+import { formatMinutes, lastSevenDayKeys, weekdayInitial } from '@/lib/date';
 import { goalProgressRatio } from '@/lib/progress';
 import { visibleStreak } from '@/lib/streak';
 import { xpLevel, xpProgressWithinLevel } from '@/lib/xp';
@@ -14,7 +14,7 @@ import {
 } from '@/store/useProgressStore';
 import { useUserStore } from '@/store/useUserStore';
 
-const DAY_LABELS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+const CHART_HEIGHT = 92;
 
 export default function ProgressScreen() {
   const dailyGoalMinutes = useUserStore((state) => state.dailyGoalMinutes);
@@ -49,12 +49,12 @@ export default function ProgressScreen() {
 
       <Card style={styles.weekCard}>
         <View style={styles.weekHeader}>
-          <View>
-            <AppText variant="micro" color={colors.textMuted}>
+          <View style={styles.weekHeaderText}>
+            <AppText variant="overline" color={colors.textSubtle}>
               WEEKLY GOAL
             </AppText>
             <AppText variant="heading">
-              {weekMinutes} / {weeklyGoal} minutes
+              {weekMinutes} / {weeklyGoal} min
             </AppText>
           </View>
           <StreakBadge days={visibleStreak(streak)} />
@@ -68,17 +68,39 @@ export default function ProgressScreen() {
         <View style={styles.chart} accessibilityLabel="Study minutes for the last seven days">
           {weekKeys.map((key, index) => {
             const minutes = Math.floor((activityByDate[key]?.studySeconds ?? 0) / 60);
-            const height = Math.max(4, (minutes / maxDayMinutes) * 80);
+            const height = Math.max(6, (minutes / maxDayMinutes) * CHART_HEIGHT);
+            const metGoal = minutes >= dailyGoalMinutes;
+            const isToday = index === weekKeys.length - 1;
+
             return (
               <View key={key} style={styles.chartColumn}>
-                <View
-                  style={[
-                    styles.bar,
-                    { height, backgroundColor: minutes > 0 ? colors.primary : colors.border },
-                  ]}
-                />
-                <AppText variant="micro" color={colors.textSubtle}>
-                  {DAY_LABELS[index]}
+                <AppText
+                  variant="micro"
+                  color={minutes > 0 ? colors.textMuted : colors.textFaint}
+                  style={styles.barValue}
+                >
+                  {minutes > 0 ? minutes : ''}
+                </AppText>
+                <View style={styles.barTrack}>
+                  <View
+                    style={[
+                      styles.bar,
+                      {
+                        height,
+                        backgroundColor: metGoal
+                          ? colors.success
+                          : minutes > 0
+                            ? colors.primary
+                            : colors.border,
+                      },
+                    ]}
+                  />
+                </View>
+                <AppText
+                  variant="micro"
+                  color={isToday ? colors.primaryDeep : colors.textSubtle}
+                >
+                  {weekdayInitial(key)}
                 </AppText>
               </View>
             );
@@ -88,7 +110,7 @@ export default function ProgressScreen() {
 
       <Card style={styles.levelCard}>
         <View style={styles.levelRow}>
-          <AppText variant="micro" color={colors.textMuted}>
+          <AppText variant="overline" color={colors.textSubtle}>
             XP LEVEL {level}
           </AppText>
           <AppText variant="micro" color={colors.textMuted}>
@@ -131,8 +153,15 @@ export default function ProgressScreen() {
                 unlocked ? 'Unlocked' : 'Locked'
               }. ${achievement.description}`}
             >
-              <AppText variant="heading">{unlocked ? achievement.emoji : '🔒'}</AppText>
-              <AppText variant="micro" center numberOfLines={2}>
+              <AppText variant="heading" style={!unlocked && styles.achievementLockedText}>
+                {unlocked ? achievement.emoji : '🔒'}
+              </AppText>
+              <AppText
+                variant="micro"
+                color={unlocked ? colors.text : colors.textSubtle}
+                center
+                numberOfLines={2}
+              >
                 {achievement.title}
               </AppText>
             </View>
@@ -161,17 +190,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    gap: spacing.md,
     marginBottom: spacing.lg,
   },
+  weekHeaderText: { flex: 1, gap: spacing.xs },
   chart: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
     marginTop: spacing.xl,
-    height: 104,
   },
-  chartColumn: { alignItems: 'center', gap: spacing.sm, flex: 1 },
-  bar: { width: 18, borderRadius: radius.sm },
+  chartColumn: { alignItems: 'center', gap: spacing.xs, flex: 1 },
+  barValue: { height: 16 },
+  barTrack: { height: CHART_HEIGHT, justifyContent: 'flex-end', marginBottom: spacing.xs },
+  bar: { width: 20, borderRadius: radius.xs },
   levelCard: { marginTop: spacing.lg },
   levelRow: {
     flexDirection: 'row',
@@ -185,22 +217,31 @@ const styles = StyleSheet.create({
     flexBasis: '45%',
     backgroundColor: colors.surface,
     borderRadius: radius.md,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.borderSoft,
     padding: spacing.lg,
     gap: 2,
   },
   achievementsHeader: { marginTop: spacing.xxl },
   achievements: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md, marginTop: spacing.lg },
   achievement: {
-    width: '30%',
+    // `flexGrow` keeps a full row of three flush to the edges on any screen
+    // width, and `maxWidth` stops the trailing row — 8 achievements wrap
+    // 3 / 3 / 2 — from stretching those two badges to half the screen each.
+    flexBasis: '30%',
     flexGrow: 1,
+    maxWidth: '31.5%',
     backgroundColor: colors.surface,
     borderRadius: radius.md,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.borderSoft,
     paddingVertical: spacing.lg,
     paddingHorizontal: spacing.sm,
     alignItems: 'center',
     gap: spacing.sm,
-    minHeight: 96,
+    minHeight: 100,
     justifyContent: 'center',
   },
-  achievementLocked: { opacity: 0.5 },
+  achievementLocked: { backgroundColor: colors.surfaceMuted, borderColor: 'transparent' },
+  achievementLockedText: { opacity: 0.75 },
 });

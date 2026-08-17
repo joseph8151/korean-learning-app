@@ -32,7 +32,7 @@ export default function AIChatSituationsScreen() {
 
       {aiProvider.isMock ? (
         <Card style={styles.notice}>
-          <AppText variant="micro" color={colors.warning}>
+          <AppText variant="micro" color={colors.warningDeep}>
             PRACTICE MODE
           </AppText>
           <AppText variant="caption" color={colors.textMuted}>

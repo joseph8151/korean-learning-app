@@ -57,7 +57,7 @@ export default function NotificationSettingsScreen() {
 
       {permissionDenied ? (
         <View style={styles.notice}>
-          <AppText variant="caption" color={colors.warning}>
+          <AppText variant="caption" color={colors.warningDeep}>
             Notifications are turned off for KoreanGo in your device settings. Turn them on there
             to get reminders.
           </AppText>

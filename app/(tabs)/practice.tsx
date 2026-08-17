@@ -88,7 +88,7 @@ export default function PracticeScreen() {
                   </AppText>
                 </View>
               ) : (
-                <Ionicons name="chevron-forward" size={18} color={colors.textSubtle} />
+                <Ionicons name="chevron-forward" size={18} color={colors.textFaint} />
               )}
             </Pressable>
           );
@@ -107,10 +107,12 @@ const styles = StyleSheet.create({
     gap: spacing.lg,
     backgroundColor: colors.surface,
     borderRadius: radius.md,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.borderSoft,
     padding: spacing.lg,
-    minHeight: 76,
+    minHeight: 80,
   },
-  pressed: { opacity: 0.9 },
+  pressed: { opacity: 0.92, transform: [{ scale: 0.99 }] },
   iconBox: {
     width: 46,
     height: 46,
@@ -126,7 +128,7 @@ const styles = StyleSheet.create({
     height: 26,
     borderRadius: 13,
     paddingHorizontal: 6,
-    backgroundColor: colors.accent,
+    backgroundColor: colors.accentDeep,
     alignItems: 'center',
     justifyContent: 'center',
   },

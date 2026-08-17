@@ -33,7 +33,7 @@ export default function LevelScreen() {
       }
     >
       <View style={styles.header}>
-        <AppText variant="micro" color={colors.primary}>
+        <AppText variant="micro" color={colors.primaryDark}>
           STEP 2 OF 3
         </AppText>
         <AppText variant="title" style={styles.title}>
@@ -62,7 +62,7 @@ export default function LevelScreen() {
         accessibilityLabel="Not sure? Take a short placement test"
         style={styles.notSure}
       >
-        <AppText variant="bodyStrong" color={colors.primary} center>
+        <AppText variant="bodyStrong" color={colors.primaryDark} center>
           Not Sure?
         </AppText>
         <AppText variant="caption" color={colors.textMuted} center>

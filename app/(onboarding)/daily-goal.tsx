@@ -40,7 +40,7 @@ export default function DailyGoalScreen() {
       }
     >
       <View style={styles.header}>
-        <AppText variant="micro" color={colors.primary}>
+        <AppText variant="micro" color={colors.primaryDark}>
           STEP 3 OF 3
         </AppText>
         <AppText variant="title" style={styles.title}>

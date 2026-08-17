@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { AppText, AudioButton, Card, QuizOption, type QuizOptionState } from '@/components/ui';
-import { colors, radius, spacing } from '@/constants/theme';
+import { colors, layout, radius, spacing } from '@/constants/theme';
 import { isAnswerCorrect } from '@/lib/scoring';
 import type { Quiz } from '@/types/content';
 
@@ -60,7 +60,7 @@ export function QuizQuestionView({
 
         {matchTarget ? (
           <View style={styles.matchTarget}>
-            <AppText variant="bodyStrong" color={colors.primary} center>
+            <AppText variant="bodyStrong" color={colors.primaryDark} center>
               {matchTarget}
             </AppText>
           </View>
@@ -161,7 +161,7 @@ function SentenceOrdering({ quiz, answered, onSelect }: QuizQuestionViewProps) {
 
       {picked.length > 0 && !answered ? (
         <Pressable onPress={handleUndo} accessibilityRole="button" accessibilityLabel="Undo last word">
-          <AppText variant="caption" color={colors.primary} center>
+          <AppText variant="caption" color={colors.primaryDark} center>
             Undo
           </AppText>
         </Pressable>
@@ -201,9 +201,9 @@ const styles = StyleSheet.create({
     borderRadius: radius.sm,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
-    minHeight: 44,
+    minHeight: layout.minTouchTarget,
     justifyContent: 'center',
   },
   tokenChoice: { backgroundColor: colors.surface, borderWidth: 1.5, borderColor: colors.border },
-  pressed: { opacity: 0.85 },
+  pressed: { opacity: 0.9, transform: [{ scale: 0.98 }] },
 });

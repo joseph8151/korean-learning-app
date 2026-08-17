@@ -82,7 +82,7 @@ export default function SignUpScreen() {
       {syncingMessage ? (
         <View style={styles.syncing} accessibilityLiveRegion="polite">
           <ActivityIndicator size="small" color={colors.primary} />
-          <AppText variant="caption" color={colors.primary}>
+          <AppText variant="caption" color={colors.primaryDark}>
             {syncingMessage}
           </AppText>
         </View>
@@ -131,7 +131,7 @@ export default function SignUpScreen() {
       >
         <AppText variant="caption" color={colors.textMuted} center>
           Already have an account?{' '}
-          <AppText variant="caption" color={colors.primary}>
+          <AppText variant="caption" color={colors.primaryDark}>
             Sign in
           </AppText>
         </AppText>

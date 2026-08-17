@@ -56,7 +56,7 @@ export default function PlacementScreen() {
       }
     >
       <View style={styles.header}>
-        <AppText variant="micro" color={colors.primary}>
+        <AppText variant="micro" color={colors.primaryDark}>
           QUESTION {index + 1} OF {questions.length}
         </AppText>
         <ProgressBar

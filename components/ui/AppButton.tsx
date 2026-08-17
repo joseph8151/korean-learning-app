@@ -1,9 +1,16 @@
 import { ActivityIndicator, Pressable, StyleSheet, View, type ViewStyle } from 'react-native';
 
-import { colors, layout, radius, spacing, typography } from '@/constants/theme';
+import { colors, layout, radius, shadow, spacing, typography } from '@/constants/theme';
 import { AppText } from './AppText';
 
-export type AppButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+export type AppButtonVariant =
+  | 'primary'
+  | 'secondary'
+  | 'outline'
+  | 'ghost'
+  | 'danger'
+  /** White pill for use on top of a gradient or other coloured panel. */
+  | 'onColor';
 export type AppButtonSize = 'sm' | 'md' | 'lg';
 
 export interface AppButtonProps {
@@ -27,20 +34,23 @@ const backgroundByVariant: Record<AppButtonVariant, string> = {
   outline: 'transparent',
   ghost: 'transparent',
   danger: colors.danger,
+  onColor: colors.white,
 };
 
+// Every pairing here clears 4.5:1 against its own background.
 const labelColorByVariant: Record<AppButtonVariant, string> = {
   primary: colors.white,
   secondary: colors.text,
-  outline: colors.primary,
+  outline: colors.primaryDeep,
   ghost: colors.textMuted,
   danger: colors.white,
+  onColor: colors.primaryDeep,
 };
 
 const heightBySize: Record<AppButtonSize, number> = {
   sm: layout.minTouchTarget,
   md: 54,
-  lg: 60,
+  lg: 58,
 };
 
 export function AppButton({
@@ -58,6 +68,7 @@ export function AppButton({
   testID,
 }: AppButtonProps) {
   const isInactive = disabled || loading;
+  const isElevated = variant === 'primary' || variant === 'onColor';
 
   return (
     <Pressable
@@ -77,6 +88,7 @@ export function AppButton({
           paddingHorizontal: fullWidth ? spacing.lg : spacing.xl,
         },
         variant === 'outline' && styles.outline,
+        isElevated && !isInactive && shadow.card,
         pressed && !isInactive && styles.pressed,
         isInactive && styles.inactive,
         style,
@@ -88,6 +100,7 @@ export function AppButton({
         <View style={styles.content}>
           {icon ? <View style={styles.icon}>{icon}</View> : null}
           <AppText
+            numberOfLines={1}
             style={[
               typography.bodyStrong,
               { color: labelColorByVariant[variant] },
@@ -113,8 +126,8 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: colors.primary,
   },
-  pressed: { opacity: 0.82, transform: [{ scale: 0.985 }] },
-  inactive: { opacity: 0.45 },
+  pressed: { opacity: 0.88, transform: [{ scale: 0.98 }] },
+  inactive: { opacity: 0.4 },
   content: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   icon: { marginRight: 2 },
   largeLabel: { fontSize: 17 },

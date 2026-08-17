@@ -91,7 +91,7 @@ export default function ListeningPracticeScreen() {
       <ProgressBar ratio={(index + 1) / data.length} />
 
       <Card style={styles.card}>
-        <AppText variant="micro" color={colors.primary}>
+        <AppText variant="micro" color={colors.primaryDark}>
           LISTEN AND GUESS
         </AppText>
 
