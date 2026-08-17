@@ -16,7 +16,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppText, EmptyState } from '@/components/ui';
 import { CHAT_SITUATIONS } from '@/constants/content';
 import { colors, layout, radius, spacing } from '@/constants/theme';
-import { audioService } from '@/services/audio';
+import { useSpeak } from '@/hooks/useKoreanVoice';
 import { AIUserFacingError, aiProvider, type ChatMessage } from '@/services/ai';
 import { useProgressStore } from '@/store/useProgressStore';
 
@@ -25,6 +25,7 @@ export default function AIChatScreen() {
   const insets = useSafeAreaInsets();
   const { situationId } = useLocalSearchParams<{ situationId: string }>();
   const recordConversationCompleted = useProgressStore((state) => state.recordConversationCompleted);
+  const { speak } = useSpeak();
 
   const situation = useMemo(
     () => CHAT_SITUATIONS.find((item) => item.id === situationId) ?? null,
@@ -210,7 +211,7 @@ export default function AIChatScreen() {
             icon="play-outline"
             onPress={() => {
               const last = [...messages].reverse().find((message) => message.role === 'assistant');
-              if (last?.korean) audioService.speakKorean(last.korean, { slow: true });
+              if (last?.korean) speak(last.korean, { slow: true });
             }}
           />
           <ToolButton
@@ -256,6 +257,7 @@ function MessageBubble({
   showTranslation: boolean;
 }) {
   const isUser = message.role === 'user';
+  const { speak } = useSpeak();
 
   return (
     <View style={[styles.bubbleRow, isUser && styles.bubbleRowUser]}>
@@ -293,7 +295,7 @@ function MessageBubble({
 
       {!isUser && message.korean ? (
         <Pressable
-          onPress={() => audioService.speakKorean(message.korean)}
+          onPress={() => speak(message.korean)}
           accessibilityRole="button"
           accessibilityLabel={`Play: ${message.korean}`}
           style={styles.play}

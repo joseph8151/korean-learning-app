@@ -7,7 +7,7 @@ import { VocabularyCard } from '@/components/VocabularyCard';
 import { AppText, Card, EmptyState, ErrorState, LoadingState, Screen } from '@/components/ui';
 import { colors, spacing } from '@/constants/theme';
 import { useAsyncData } from '@/hooks/useAsyncData';
-import { audioService } from '@/services/audio';
+import { useSpeak } from '@/hooks/useKoreanVoice';
 import { contentService } from '@/services/content';
 import { useProgressStore } from '@/store/useProgressStore';
 import type { DailyPhrase, Vocabulary } from '@/types/content';
@@ -19,6 +19,7 @@ interface SavedData {
 
 export default function SavedWordsScreen() {
   const router = useRouter();
+  const { speak } = useSpeak();
 
   const savedWordIds = useProgressStore((state) => state.savedWordIds);
   const savedPhraseIds = useProgressStore((state) => state.savedPhraseIds);
@@ -109,7 +110,7 @@ export default function SavedWordsScreen() {
 
                     <View style={styles.actions}>
                       <Pressable
-                        onPress={() => audioService.speakKorean(phrase.korean)}
+                        onPress={() => speak(phrase.korean)}
                         accessibilityRole="button"
                         accessibilityLabel={`Play ${phrase.korean}`}
                         hitSlop={8}

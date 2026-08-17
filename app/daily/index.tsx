@@ -7,7 +7,7 @@ import { DailyKoreanCard } from '@/features/home/DailyKoreanCard';
 import { AppText, Card, ErrorState, LoadingState, Screen, Tag } from '@/components/ui';
 import { colors, spacing } from '@/constants/theme';
 import { useAsyncData } from '@/hooks/useAsyncData';
-import { audioService } from '@/services/audio';
+import { useSpeak } from '@/hooks/useKoreanVoice';
 import { contentService } from '@/services/content';
 import { useProgressStore } from '@/store/useProgressStore';
 import type { DailyPhraseCategory } from '@/types/content';
@@ -26,6 +26,7 @@ const CATEGORIES: (DailyPhraseCategory | 'all')[] = [
 export default function DailyKoreanScreen() {
   const router = useRouter();
   const [category, setCategory] = useState<DailyPhraseCategory | 'all'>('all');
+  const { speak } = useSpeak();
 
   const savedPhraseIds = useProgressStore((state) => state.savedPhraseIds);
   const toggleSavedPhrase = useProgressStore((state) => state.toggleSavedPhrase);
@@ -119,7 +120,7 @@ export default function DailyKoreanScreen() {
 
               <View style={styles.actions}>
                 <Pressable
-                  onPress={() => audioService.speakKorean(phrase.korean)}
+                  onPress={() => speak(phrase.korean)}
                   accessibilityRole="button"
                   accessibilityLabel={`Play ${phrase.korean}`}
                   hitSlop={8}

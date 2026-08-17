@@ -6,13 +6,14 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { AppText, AudioButton, Card, Screen } from '@/components/ui';
 import { HANGUL_COMBINATIONS, HANGUL_STAGES } from '@/constants/content';
 import { colors, radius, spacing } from '@/constants/theme';
-import { audioService } from '@/services/audio';
+import { useSpeak } from '@/hooks/useKoreanVoice';
 import type { HangulCharacter } from '@/types/content';
 
 export default function HangulScreen() {
   const router = useRouter();
   const [stageIndex, setStageIndex] = useState(0);
   const [selected, setSelected] = useState<HangulCharacter | null>(null);
+  const { speak } = useSpeak();
 
   const stage = HANGUL_STAGES[stageIndex];
 
@@ -67,7 +68,7 @@ export default function HangulScreen() {
             key={character.id}
             onPress={() => {
               setSelected(character);
-              audioService.speakKorean(character.exampleSyllable);
+              speak(character.exampleSyllable);
             }}
             accessibilityRole="button"
             accessibilityLabel={`${character.character}, pronounced ${character.romanization}`}
@@ -124,7 +125,7 @@ export default function HangulScreen() {
           {HANGUL_COMBINATIONS.map((combination) => (
             <Pressable
               key={combination.syllable}
-              onPress={() => audioService.speakKorean(combination.syllable)}
+              onPress={() => speak(combination.syllable)}
               accessibilityRole="button"
               accessibilityLabel={`${combination.consonant} plus ${combination.vowel} makes ${combination.syllable}, ${combination.romanization}`}
               style={({ pressed }) => [styles.combo, pressed && styles.pressed]}
