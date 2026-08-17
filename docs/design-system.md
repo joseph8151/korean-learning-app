@@ -74,3 +74,50 @@ badge-sized pressables in particular.
   reads on its own, without the surrounding layout.
 - Progress bars expose `accessibilityValue`.
 - Raw error strings never reach a learner; `ErrorState` owns the copy.
+
+## Depth
+
+Two kinds, used for different jobs.
+
+**Soft shadow** (`shadow.card`, `shadow.raised`) lifts a card off the
+background. Reads as "floating". Used on cards and gradient panels.
+
+**Chunky depth** (`depth`, `undersides`) is a second solid view offset behind
+the surface, so the control has a visible side wall. Reads as "physical
+object". Pressing drops the face onto the underside by `depth.press` — never
+all the way, because a control flattened completely looks broken rather than
+pressed. The underside shortens by exactly what the face travels, so the
+overall height never changes and nothing around it shifts.
+
+Reserved for the primary action on a screen (`ChunkyButton`) and reward tiles.
+Applied to everything, it just gets loud, which is why `AppButton` still
+exists for secondary actions.
+
+## Motion
+
+All in `components/motion/`, all on the UI thread via Reanimated, so animation
+stays smooth while the JS thread loads the next screen.
+
+- `Bouncy` — spring press for anything tappable. A spring gives a control mass;
+  an opacity fade is what every default looks like.
+- `Reveal` — staggered entrance, ~55ms per step. The cascade is most of the
+  difference between a screen that appears and one that arrives.
+- `CountUp` — numbers that tick up. Earned XP and streaks only.
+- `FlipCard` — real 3D rotation with `perspective`. Without perspective a card
+  just squashes horizontally instead of turning.
+- `Confetti` — one-shot burst, milestones only. Confetti that fires on every
+  tap stops meaning anything.
+- `StreakFlame` — slow asymmetric pulse. It lives on the home screen
+  permanently, so anything faster becomes an irritation within a day.
+
+### Rules
+
+- **Reduced motion is honoured everywhere.** `useReduceMotion` reads the OS
+  setting and keeps watching it. Confetti renders nothing, travel becomes a
+  plain fade, `CountUp` shows the final number, `FlipCard` snaps.
+- **Decorative motion is hidden from screen readers.** Confetti and the
+  celebration seal both set `accessibilityElementsHidden`.
+- **`CountUp` announces the final value immediately.** Nobody wants to hear a
+  number counted aloud.
+- Springs come from `depth.spring` rather than being tuned per component, so
+  the whole app feels like one physical system.

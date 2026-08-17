@@ -1,6 +1,8 @@
 export { AppText } from './AppText';
 export type { AppTextProps, AppTextVariant } from './AppText';
 export { AppButton } from './AppButton';
+export { ChunkyButton } from './ChunkyButton';
+export type { ChunkyButtonProps, ChunkyTone } from './ChunkyButton';
 export type { AppButtonProps, AppButtonSize, AppButtonVariant } from './AppButton';
 export { Screen } from './Screen';
 export { Card } from './Card';

@@ -1,9 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
+import { Bouncy, FlipCard } from '@/components/motion';
 import { AppButton, AppText, AudioButton, Card } from '@/components/ui';
-import { colors, spacing } from '@/constants/theme';
+import { colors, radius, spacing } from '@/constants/theme';
 import type { Vocabulary } from '@/types/content';
 
 export interface VocabularyCardProps {
@@ -24,59 +25,71 @@ export function VocabularyCard({
 }: VocabularyCardProps) {
   const [flipped, setFlipped] = useState(false);
 
+  const front = (
+    <View style={styles.face}>
+      <AppText variant="koreanLarge" center>
+        {word.korean}
+      </AppText>
+      <View style={styles.hintPill}>
+        <Ionicons name="sync-outline" size={13} color={colors.primaryDeep} />
+        <AppText variant="micro" color={colors.primaryDeep}>
+          Tap to flip
+        </AppText>
+      </View>
+    </View>
+  );
+
+  const back = (
+    <View style={styles.face}>
+      <AppText variant="korean" center>
+        {word.korean}
+      </AppText>
+      <AppText variant="body" color={colors.textMuted} center>
+        {word.romanization}
+      </AppText>
+      <AppText variant="subheading" center>
+        {word.english}
+      </AppText>
+
+      {word.exampleKorean ? (
+        <View style={styles.example}>
+          <AppText variant="body" center>
+            {word.exampleKorean}
+          </AppText>
+          <AppText variant="caption" color={colors.textMuted} center>
+            {word.exampleEnglish}
+          </AppText>
+        </View>
+      ) : null}
+    </View>
+  );
+
   return (
     <Card>
-      <Pressable
+      <FlipCard
+        flipped={flipped}
         onPress={() => setFlipped((value) => !value)}
-        accessibilityRole="button"
+        front={front}
+        back={back}
         accessibilityLabel={
           flipped
             ? `${word.korean}. ${word.romanization}. ${word.english}`
             : `${word.korean}. Tap to reveal the meaning.`
         }
-        style={styles.face}
-      >
-        <AppText variant="koreanLarge" center>
-          {word.korean}
-        </AppText>
-
-        {flipped ? (
-          <View style={styles.back}>
-            <AppText variant="body" color={colors.textMuted} center>
-              {word.romanization}
-            </AppText>
-            <AppText variant="subheading" center>
-              {word.english}
-            </AppText>
-
-            {word.exampleKorean ? (
-              <View style={styles.example}>
-                <AppText variant="body" center>
-                  {word.exampleKorean}
-                </AppText>
-                <AppText variant="caption" color={colors.textMuted} center>
-                  {word.exampleEnglish}
-                </AppText>
-              </View>
-            ) : null}
-          </View>
-        ) : (
-          <AppText variant="caption" color={colors.textSubtle} center style={styles.hint}>
-            Tap to flip
-          </AppText>
-        )}
-      </Pressable>
+        accessibilityHint="Turns the card over"
+      />
 
       <View style={styles.actions}>
         <AudioButton text={word.korean} compact />
 
-        <Pressable
+        <Bouncy
           onPress={onToggleSave}
-          accessibilityRole="button"
+          scaleTo={0.88}
+          haptic
           accessibilityLabel={saved ? 'Remove from saved words' : 'Save this word'}
           accessibilityState={{ selected: saved }}
-          style={styles.saveButton}
           hitSlop={8}
+          style={styles.saveButton}
         >
           <Ionicons
             name={saved ? 'bookmark' : 'bookmark-outline'}
@@ -86,7 +99,7 @@ export function VocabularyCard({
           <AppText variant="caption" color={saved ? colors.accentDeep : colors.textMuted}>
             {saved ? 'Saved' : 'Save'}
           </AppText>
-        </Pressable>
+        </Bouncy>
       </View>
 
       {onKnowIt && onReviewAgain ? (
@@ -106,8 +119,23 @@ export function VocabularyCard({
 }
 
 const styles = StyleSheet.create({
-  face: { alignItems: 'center', gap: spacing.md, paddingVertical: spacing.md },
-  back: { gap: spacing.xs, alignItems: 'center' },
+  face: {
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingVertical: spacing.md,
+    minHeight: 190,
+    justifyContent: 'center',
+  },
+  hintPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    backgroundColor: colors.primarySoft,
+    borderRadius: radius.pill,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 5,
+    marginTop: spacing.sm,
+  },
   example: {
     marginTop: spacing.lg,
     paddingTop: spacing.lg,
@@ -116,7 +144,6 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
     alignSelf: 'stretch',
   },
-  hint: { marginTop: spacing.sm },
   actions: {
     flexDirection: 'row',
     alignItems: 'center',

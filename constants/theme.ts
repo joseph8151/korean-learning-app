@@ -163,6 +163,39 @@ export const shadow = {
   },
 } as const;
 
+/**
+ * How far a "chunky" surface sits above its own solid underside, and how far
+ * it travels when pressed. The underside is a real second view offset behind
+ * the surface, not a blur — that hard edge is what makes a control read as a
+ * physical object you can push, which a soft drop shadow never does.
+ */
+export const depth = {
+  /** Resting offset of the underside, in px. */
+  lift: 5,
+  /** How far the surface drops on press. It never drops to zero — a control
+   *  flattened completely looks broken rather than pressed. */
+  press: 3,
+  /** Springs used across the app, so motion feels like one physical system. */
+  spring: {
+    press: { damping: 18, stiffness: 420, mass: 0.7 },
+    settle: { damping: 15, stiffness: 180, mass: 0.9 },
+    bouncy: { damping: 9, stiffness: 190, mass: 0.8 },
+  },
+} as const;
+
+/**
+ * Underside colours for chunky surfaces: a darker, slightly desaturated
+ * version of the face. Picked by hand rather than computed, because a plain
+ * darkening of a bright hue goes muddy.
+ */
+export const undersides = {
+  primary: '#4034B8',
+  surface: '#D9DCEA',
+  secondary: '#D99433',
+  accent: '#C4304C',
+  success: '#0B7A4A',
+} as const;
+
 export const layout = {
   screenPadding: spacing.xl,
   minTouchTarget: 48,

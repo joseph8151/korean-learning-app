@@ -4,11 +4,12 @@ import { useCallback } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { SeoulSkyline } from '@/components/decor/SeoulSkyline';
+import { Bouncy, CountUp, Reveal } from '@/components/motion';
 import { DailyKoreanCard } from '@/features/home/DailyKoreanCard';
 import {
-  AppButton,
   AppText,
   Card,
+  ChunkyButton,
   ErrorState,
   GradientCard,
   LoadingState,
@@ -120,105 +121,112 @@ export default function HomeScreen() {
         </Pressable>
       </View>
 
-      {next ? (
-        <GradientCard
-          style={styles.hero}
-          contentStyle={styles.heroContent}
-          decoration={<SeoulSkyline />}
-          onPress={() => openLesson(next.lesson)}
-          accessibilityLabel={`Today's lesson: ${next.lesson.title}, ${next.unit.title}, ${next.lesson.estimatedMinutes} minutes`}
-          accessibilityHint="Opens the lesson"
-        >
-          <AppText variant="overline" color={onGradient.secondary}>
-            TODAY&apos;S LESSON
-          </AppText>
-          <AppText variant="title" color={onGradient.primary} style={styles.heroTitle}>
-            {next.lesson.title}
-          </AppText>
-          <AppText variant="caption" color={onGradient.secondary}>
-            {next.unit.title} · {next.lesson.estimatedMinutes} min
-          </AppText>
-
-          <AppButton
-            label="Start Lesson"
-            size="lg"
-            variant="onColor"
-            style={styles.heroButton}
+      <Reveal index={0}>
+        {next ? (
+          <GradientCard
+            style={styles.hero}
+            contentStyle={styles.heroContent}
+            decoration={<SeoulSkyline />}
             onPress={() => openLesson(next.lesson)}
-            accessibilityHint={`Opens ${next.lesson.title}`}
-          />
-        </GradientCard>
-      ) : (
-        <Card style={styles.hero}>
-          <AppText variant="subheading">You have finished every lesson. 🎉</AppText>
-          <AppText variant="caption" color={colors.textMuted} style={styles.heroTitle}>
-            Keep it warm with a quick drill or a review session.
-          </AppText>
-          <AppButton
-            label="Practise Now"
-            style={styles.heroButton}
-            onPress={() => router.push('/practice/quick-quiz')}
-          />
-        </Card>
-      )}
-
-      <Card style={styles.goalCard}>
-        <View style={styles.goalHeader}>
-          <View style={styles.goalHeaderText}>
-            <AppText variant="overline" color={colors.textSubtle}>
-              DAILY GOAL
+            accessibilityLabel={`Today's lesson: ${next.lesson.title}, ${next.unit.title}, ${next.lesson.estimatedMinutes} minutes`}
+            accessibilityHint="Opens the lesson"
+          >
+            <AppText variant="overline" color={onGradient.secondary}>
+              TODAY&apos;S LESSON
             </AppText>
-            <View style={styles.goalNumbers}>
-              <AppText variant="title">{todayMinutes}</AppText>
-              <AppText variant="caption" color={colors.textMuted} style={styles.goalUnit}>
-                / {dailyGoalMinutes} min
+            <AppText variant="title" color={onGradient.primary} style={styles.heroTitle}>
+              {next.lesson.title}
+            </AppText>
+            <AppText variant="caption" color={onGradient.secondary}>
+              {next.unit.title} · {next.lesson.estimatedMinutes} min
+            </AppText>
+
+            <ChunkyButton
+              label="Start Lesson"
+              tone="surface"
+              style={styles.heroButton}
+              onPress={() => openLesson(next.lesson)}
+              accessibilityHint={`Opens ${next.lesson.title}`}
+            />
+          </GradientCard>
+        ) : (
+          <Card style={styles.hero}>
+            <AppText variant="subheading">You have finished every lesson. 🎉</AppText>
+            <AppText variant="caption" color={colors.textMuted} style={styles.heroTitle}>
+              Keep it warm with a quick drill or a review session.
+            </AppText>
+            <ChunkyButton
+              label="Practise Now"
+              style={styles.heroButton}
+              onPress={() => router.push('/practice/quick-quiz')}
+            />
+          </Card>
+        )}
+      </Reveal>
+
+      <Reveal index={1}>
+        <Card style={styles.goalCard}>
+          <View style={styles.goalHeader}>
+            <View style={styles.goalHeaderText}>
+              <AppText variant="overline" color={colors.textSubtle}>
+                DAILY GOAL
               </AppText>
+              <View style={styles.goalNumbers}>
+                <CountUp value={todayMinutes} variant="title" duration={700} />
+                <AppText variant="caption" color={colors.textMuted} style={styles.goalUnit}>
+                  / {dailyGoalMinutes} min
+                </AppText>
+              </View>
             </View>
+            <StreakBadge days={days} />
           </View>
-          <StreakBadge days={days} />
-        </View>
 
-        <ProgressBar
-          ratio={goalRatio}
-          color={goalMet ? colors.success : colors.primary}
-          trackColor={goalMet ? colors.successSoft : colors.primarySoft}
-          accessibilityLabel={`Daily goal ${todayMinutes} of ${dailyGoalMinutes} minutes`}
-        />
-
-        <View style={styles.goalHint}>
-          <Ionicons
-            name={goalMet ? 'checkmark-circle' : 'time-outline'}
-            size={15}
-            color={goalMet ? colors.successDeep : colors.textSubtle}
+          <ProgressBar
+            ratio={goalRatio}
+            color={goalMet ? colors.success : colors.primary}
+            trackColor={goalMet ? colors.successSoft : colors.primarySoft}
+            accessibilityLabel={`Daily goal ${todayMinutes} of ${dailyGoalMinutes} minutes`}
           />
-          <AppText variant="caption" color={goalMet ? colors.successDeep : colors.textMuted}>
-            {goalMet
-              ? 'Goal complete. Anything else today is a bonus.'
-              : `${Math.max(dailyGoalMinutes - todayMinutes, 0)} minutes to go.`}
-          </AppText>
+
+          <View style={styles.goalHint}>
+            <Ionicons
+              name={goalMet ? 'checkmark-circle' : 'time-outline'}
+              size={15}
+              color={goalMet ? colors.successDeep : colors.textSubtle}
+            />
+            <AppText variant="caption" color={goalMet ? colors.successDeep : colors.textMuted}>
+              {goalMet
+                ? 'Goal complete. Anything else today is a bonus.'
+                : `${Math.max(dailyGoalMinutes - todayMinutes, 0)} minutes to go.`}
+            </AppText>
+          </View>
+        </Card>
+      </Reveal>
+
+      <Reveal index={2}>
+        <View style={styles.quickRow}>
+          {QUICK_ACTIONS.map((action) => (
+            <QuickAction
+              key={action.label}
+              emoji={action.emoji}
+              label={action.label}
+              tint={action.tint}
+              onPress={() => router.push(action.href)}
+            />
+          ))}
         </View>
-      </Card>
+      </Reveal>
 
-      <View style={styles.quickRow}>
-        {QUICK_ACTIONS.map((action) => (
-          <QuickAction
-            key={action.label}
-            emoji={action.emoji}
-            label={action.label}
-            tint={action.tint}
-            onPress={() => router.push(action.href)}
+      <Reveal index={3}>
+        <View style={styles.section}>
+          <DailyKoreanCard
+            phrase={data.phrase}
+            saved={savedPhraseIds.includes(data.phrase.id)}
+            onToggleSave={() => toggleSavedPhrase(data.phrase.id)}
+            onSeeAll={() => router.push('/daily')}
           />
-        ))}
-      </View>
-
-      <View style={styles.section}>
-        <DailyKoreanCard
-          phrase={data.phrase}
-          saved={savedPhraseIds.includes(data.phrase.id)}
-          onToggleSave={() => toggleSavedPhrase(data.phrase.id)}
-          onSeeAll={() => router.push('/daily')}
-        />
-      </View>
+        </View>
+      </Reveal>
     </Screen>
   );
 }
@@ -235,11 +243,12 @@ function QuickAction({
   onPress: () => void;
 }) {
   return (
-    <Pressable
+    <Bouncy
       onPress={onPress}
-      accessibilityRole="button"
+      haptic
+      scaleTo={0.93}
       accessibilityLabel={label}
-      style={({ pressed }) => [styles.quickAction, pressed && styles.pressed]}
+      style={styles.quickAction}
     >
       <View style={[styles.quickIcon, { backgroundColor: tint }]}>
         <AppText variant="subheading">{emoji}</AppText>
@@ -247,7 +256,7 @@ function QuickAction({
       <AppText variant="micro" color={colors.textMuted} center numberOfLines={1}>
         {label}
       </AppText>
-    </Pressable>
+    </Bouncy>
   );
 }
 

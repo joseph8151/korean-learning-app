@@ -3,7 +3,9 @@ import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { Alert, Linking, Pressable, StyleSheet, View } from 'react-native';
 
-import { AppButton, AppText, GradientCard, Screen } from '@/components/ui';
+import { Bouncy } from '@/components/motion';
+
+import { AppText, ChunkyButton, GradientCard, Screen } from '@/components/ui';
 import { PRIVACY_URL, TERMS_URL } from '@/constants/app';
 import { PREMIUM_BENEFITS, PRICING_PLANS, type PricingPlan } from '@/constants/pricing';
 import { colors, onGradient, radius, shadow, spacing } from '@/constants/theme';
@@ -84,9 +86,9 @@ export default function PaywallScreen() {
     <Screen
       footer={
         <View style={styles.footer}>
-          <AppButton
+          <ChunkyButton
             label={selected.trialDays > 0 ? 'Start Free Trial' : 'Get Lifetime Access'}
-            size="lg"
+            tone="secondary"
             loading={busy}
             onPress={handlePurchase}
           />
@@ -167,9 +169,11 @@ export default function PaywallScreen() {
         {PRICING_PLANS.map((plan) => {
           const isSelected = plan.id === selected.id;
           return (
-            <Pressable
+            <Bouncy
               key={plan.id}
               onPress={() => setSelected(plan)}
+              haptic
+              scaleTo={0.975}
               accessibilityRole="radio"
               accessibilityState={{ selected: isSelected }}
               accessibilityLabel={`${plan.title}, ${plan.priceLabel} ${plan.periodLabel}${
@@ -204,7 +208,7 @@ export default function PaywallScreen() {
                   {plan.periodLabel}
                 </AppText>
               </View>
-            </Pressable>
+            </Bouncy>
           );
         })}
       </View>

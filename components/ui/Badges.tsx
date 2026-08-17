@@ -1,5 +1,6 @@
 import { StyleSheet, View, type ViewStyle } from 'react-native';
 
+import { StreakFlame } from '@/components/motion/StreakFlame';
 import { colors, radius, spacing } from '@/constants/theme';
 import { AppText } from './AppText';
 
@@ -23,8 +24,9 @@ export function StreakBadge({ days, compact = false, style }: StreakBadgeProps) 
       ]}
       accessibilityLabel={days === 1 ? '1 day streak' : `${days} day streak`}
     >
+      <StreakFlame active={active} />
       <AppText variant="micro" color={active ? colors.warningDeep : colors.textSubtle}>
-        {active ? '🔥' : '·'} {label}
+        {label}
       </AppText>
     </View>
   );
@@ -69,6 +71,9 @@ export function Tag({
 
 const styles = StyleSheet.create({
   badge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
     paddingHorizontal: spacing.md,
     paddingVertical: 6,
     borderRadius: radius.pill,

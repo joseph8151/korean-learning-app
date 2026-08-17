@@ -1,7 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, type Href } from 'expo-router';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
+import { Bouncy, Reveal } from '@/components/motion';
 import { AppText, PremiumBadge, Screen, SectionHeader } from '@/components/ui';
 import { colors, radius, spacing } from '@/constants/theme';
 import { usePremiumGate } from '@/hooks/usePremium';
@@ -49,48 +50,49 @@ export default function PracticeScreen() {
       </View>
 
       <View style={styles.grid}>
-        {ITEMS.map((item) => {
+        {ITEMS.map((item, index) => {
           const locked = item.premium && !isPremium;
           const count = countFor(item.id);
 
           return (
-            <Pressable
-              key={item.id}
-              onPress={() => guard(item.premium, () => router.push(item.href))}
-              accessibilityRole="button"
-              accessibilityLabel={`${item.title}. ${item.description}${locked ? ' Premium.' : ''}`}
-              style={({ pressed }) => [styles.tile, pressed && styles.pressed]}
-            >
-              <View style={[styles.iconBox, { backgroundColor: item.tint }]}>
-                <Ionicons
-                  name={locked ? 'lock-closed' : item.icon}
-                  size={22}
-                  color={locked ? colors.textSubtle : colors.text}
-                />
-              </View>
-
-              <View style={styles.tileText}>
-                <View style={styles.titleRow}>
-                  <AppText variant="bodyStrong" style={styles.tileTitle}>
-                    {item.title}
-                  </AppText>
-                  {locked ? <PremiumBadge label="PRO" /> : null}
+            <Reveal key={item.id} index={index}>
+              <Bouncy
+                onPress={() => guard(item.premium, () => router.push(item.href))}
+                haptic
+                accessibilityLabel={`${item.title}. ${item.description}${locked ? ' Premium.' : ''}`}
+                style={styles.tile}
+              >
+                <View style={[styles.iconBox, { backgroundColor: item.tint }]}>
+                  <Ionicons
+                    name={locked ? 'lock-closed' : item.icon}
+                    size={22}
+                    color={locked ? colors.textSubtle : colors.text}
+                  />
                 </View>
-                <AppText variant="caption" color={colors.textMuted}>
-                  {item.description}
-                </AppText>
-              </View>
 
-              {count && count > 0 ? (
-                <View style={styles.count}>
-                  <AppText variant="micro" color={colors.white}>
-                    {count}
+                <View style={styles.tileText}>
+                  <View style={styles.titleRow}>
+                    <AppText variant="bodyStrong" style={styles.tileTitle}>
+                      {item.title}
+                    </AppText>
+                    {locked ? <PremiumBadge label="PRO" /> : null}
+                  </View>
+                  <AppText variant="caption" color={colors.textMuted}>
+                    {item.description}
                   </AppText>
                 </View>
-              ) : (
-                <Ionicons name="chevron-forward" size={18} color={colors.textFaint} />
-              )}
-            </Pressable>
+
+                {count && count > 0 ? (
+                  <View style={styles.count}>
+                    <AppText variant="micro" color={colors.white}>
+                      {count}
+                    </AppText>
+                  </View>
+                ) : (
+                  <Ionicons name="chevron-forward" size={18} color={colors.textFaint} />
+                )}
+              </Bouncy>
+            </Reveal>
           );
         })}
       </View>
@@ -112,7 +114,6 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     minHeight: 80,
   },
-  pressed: { opacity: 0.92, transform: [{ scale: 0.99 }] },
   iconBox: {
     width: 46,
     height: 46,

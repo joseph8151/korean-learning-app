@@ -8,8 +8,8 @@ import { LessonStepView } from '@/features/lesson/LessonStepView';
 import { AnswerFeedback } from '@/features/quiz/AnswerFeedback';
 import { QuizQuestionView } from '@/features/quiz/QuizQuestionView';
 import {
-  AppButton,
   AppText,
+  ChunkyButton,
   ErrorState,
   LoadingState,
   ProgressBar,
@@ -178,9 +178,9 @@ export default function LessonScreen() {
               seed={stepIndex}
             />
           ) : null}
-          <AppButton
+          <ChunkyButton
             label={isLastStep ? 'Finish Lesson' : 'Continue'}
-            size="lg"
+            tone={isLastStep ? 'success' : 'primary'}
             disabled={!canAdvance}
             onPress={handleNext}
           />
