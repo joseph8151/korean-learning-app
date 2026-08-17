@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import { useCallback } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
+import { SeoulSkyline } from '@/components/decor/SeoulSkyline';
 import { DailyKoreanCard } from '@/features/home/DailyKoreanCard';
 import {
   AppButton,
@@ -122,6 +123,8 @@ export default function HomeScreen() {
       {next ? (
         <GradientCard
           style={styles.hero}
+          contentStyle={styles.heroContent}
+          decoration={<SeoulSkyline />}
           onPress={() => openLesson(next.lesson)}
           accessibilityLabel={`Today's lesson: ${next.lesson.title}, ${next.unit.title}, ${next.lesson.estimatedMinutes} minutes`}
           accessibilityHint="Opens the lesson"
@@ -268,6 +271,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   hero: { marginTop: spacing.xl },
+  // Extra bottom room so the skyline sits under the button rather than
+  // behind it.
+  heroContent: { paddingBottom: spacing.xxl },
   heroTitle: { marginTop: spacing.xs, marginBottom: spacing.xs },
   heroButton: { marginTop: spacing.xl },
   goalCard: { marginTop: spacing.lg },

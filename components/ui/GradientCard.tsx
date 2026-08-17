@@ -17,6 +17,12 @@ export interface GradientCardProps {
   padded?: boolean;
   /** Diagonal by default; `horizontal` keeps text over the darker left stops. */
   direction?: 'diagonal' | 'horizontal';
+  /**
+   * Decoration painted behind the children and inside the rounded clip — the
+   * Seoul skyline, typically. Purely visual, so it is hidden from assistive
+   * technology.
+   */
+  decoration?: ReactNode;
   accessibilityLabel?: string;
   accessibilityHint?: string;
   testID?: string;
@@ -41,6 +47,7 @@ export function GradientCard({
   contentStyle,
   padded = true,
   direction = 'diagonal',
+  decoration,
   accessibilityLabel,
   accessibilityHint,
   testID,
@@ -56,6 +63,16 @@ export function GradientCard({
       end={end}
       style={[styles.surface, padded && styles.padded, contentStyle]}
     >
+      {decoration ? (
+        <View
+          style={StyleSheet.absoluteFill}
+          pointerEvents="none"
+          accessibilityElementsHidden
+          importantForAccessibility="no-hide-descendants"
+        >
+          {decoration}
+        </View>
+      ) : null}
       {children}
     </LinearGradient>
   );

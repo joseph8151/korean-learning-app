@@ -2,6 +2,138 @@ import type { CultureArticle } from '@/types/content';
 
 export const CULTURE_ARTICLES: CultureArticle[] = [
   {
+    id: 'culture-nunchi',
+    title: 'Nunchi: Reading the Room',
+    subtitle: 'The skill Koreans notice you not having.',
+    emoji: '👀',
+    readMinutes: 3,
+    isPremium: false,
+    sections: [
+      {
+        heading: 'What it is',
+        body: '눈치 (nunchi) is the ability to sense what people around you are feeling and what they want, without anyone saying it. Literally "eye measure". Someone with 눈치가 빠르다 (fast nunchi) picks up the room instantly; 눈치가 없다 (no nunchi) is a real criticism.',
+      },
+      {
+        heading: 'Where you will meet it',
+        body: 'The boss reaches for their jacket at a team dinner — everyone starts standing up. Nobody announced the end. At a shared meal, you notice the oldest person has not lifted their spoon yet, so you wait. Nobody told you to.',
+      },
+      {
+        heading: 'How to build it',
+        body: 'Watch who moves first, who pours first, who speaks last. In a Korean group, seniority sets the order for almost everything. Copying the person one step senior to you is nearly always right.',
+      },
+    ],
+  },
+  {
+    id: 'culture-age',
+    title: 'Why Age Comes Up So Fast',
+    subtitle: 'It is not nosiness — it is grammar.',
+    emoji: '🎂',
+    readMinutes: 3,
+    isPremium: false,
+    sections: [
+      {
+        heading: 'The question is practical',
+        body: '나이가 어떻게 되세요? within minutes of meeting is normal. Korean has no neutral "you", and the verb ending changes depending on whether the person is above or below you. Until age is settled, the language itself is stuck.',
+      },
+      {
+        heading: 'What changes after the answer',
+        body: 'Older becomes 형/오빠 (for a man) or 누나/언니 (for a woman), and gets 존댓말. Same age unlocks 친구 and casual speech. Younger can be addressed by name. One year is enough to set the whole relationship.',
+      },
+      {
+        heading: 'The counting catch',
+        body: 'Korea switched to international age in 2023, so a Korean age answer today usually matches your passport. Older people may still quote the traditional count, which added a year at birth and another every New Year.',
+      },
+    ],
+  },
+  {
+    id: 'culture-delivery',
+    title: 'Delivery Is a Way of Life',
+    subtitle: 'Anything, anywhere, at 2am.',
+    emoji: '🛵',
+    readMinutes: 2,
+    isPremium: false,
+    sections: [
+      {
+        heading: 'Scale',
+        body: 'Korea has the densest delivery network on earth. Fried chicken to a picnic blanket by the Han River, coffee to an office on the 14th floor, groceries at your door before 7am. 배달의민족 and 쿠팡이츠 do most of it.',
+      },
+      {
+        heading: 'The phrases that matter',
+        body: '문 앞에 놔주세요 (leave it at the door) is the most used sentence in Korean delivery. 벨 누르지 마세요 (please do not ring the bell) is the second. Both go in the app request box, not to a person.',
+      },
+      {
+        heading: 'The etiquette',
+        body: 'Tipping is not a thing and can confuse people. A review is the currency instead — riders and restaurants live on the star rating.',
+      },
+    ],
+  },
+  {
+    id: 'culture-kakao',
+    title: 'Everything Runs on KakaoTalk',
+    subtitle: 'Chat, pay, taxi, bank.',
+    emoji: '💬',
+    readMinutes: 2,
+    isPremium: true,
+    sections: [
+      {
+        heading: 'Not just messaging',
+        body: 'KakaoTalk is close to universal in Korea. Asking someone for their phone number is less common than 카톡 아이디 뭐예요? (what is your Kakao ID). Payments, taxis, banking and shopping are built into it.',
+      },
+      {
+        heading: 'How Koreans actually type',
+        body: 'ㅋㅋㅋ is laughing. ㅠㅠ is crying. ㅇㅇ is a casual yes, ㄴㄴ is no. 넵 is a chirpy "yes" to a boss; plain 네 can read as cold in a chat even though it is perfectly polite out loud.',
+      },
+      {
+        heading: 'Read receipts',
+        body: 'The number next to your message is how many people have not read it yet. When it disappears, they have seen it. There is no hiding, which is why 읽씹 (read and ignored) is an actual accusation.',
+      },
+    ],
+  },
+  {
+    id: 'culture-pc-noraebang',
+    title: 'Noraebang and PC Bang',
+    subtitle: 'Where the night actually goes.',
+    emoji: '🎤',
+    readMinutes: 3,
+    isPremium: true,
+    sections: [
+      {
+        heading: 'Noraebang',
+        body: '노래방 is a private karaoke room rented by the hour, not a stage in a bar. It is the standard second or third stop of an evening. Staff often add 서비스 — free extra time — near the end, announced by the timer jumping up.',
+      },
+      {
+        heading: 'The unwritten rules',
+        body: 'Everyone sings; sitting the whole session out is noticed. You clap for whoever is up. Cutting a song short with 취소 when the room has gone quiet is a kindness, not an insult.',
+      },
+      {
+        heading: 'PC bang',
+        body: 'PC방 is a gaming cafe, and Korean ones are extremely good — high-end machines by the hour, with food delivered to your seat. 라면 at a PC방 is its own small tradition.',
+      },
+    ],
+  },
+  {
+    id: 'culture-gift',
+    title: 'Giving and Receiving',
+    subtitle: 'Two hands, always.',
+    emoji: '🎁',
+    readMinutes: 2,
+    isPremium: true,
+    sections: [
+      {
+        heading: 'Two hands',
+        body: 'Hand over and accept anything — money, a business card, a glass, a gift — with two hands, or with your right hand while your left touches your forearm. Doing it one-handed to someone senior reads as dismissive.',
+      },
+      {
+        heading: 'Pouring',
+        body: 'You never pour your own drink. You watch for an empty glass near you and fill it, and someone does the same for you. When someone senior pours for you, hold your glass with both hands and turn slightly away as you drink.',
+      },
+      {
+        heading: 'Refusing politely',
+        body: 'A first refusal is often just politeness, and offering twice is normal. If you genuinely mean no, 괜찮아요 with a small hand gesture is understood and not rude.',
+      },
+    ],
+  },
+  {
     id: 'culture-uri',
     title: 'Why Koreans Say "우리"',
     subtitle: 'Our country, our company, our mum.',

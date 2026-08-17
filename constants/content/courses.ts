@@ -1,3 +1,4 @@
+import { seoulLines } from '@/constants/theme';
 import type { Course, Lesson, Unit } from '@/types/content';
 
 export const COURSES: Course[] = [
@@ -9,7 +10,8 @@ export const COURSES: Course[] = [
     orderIndex: 1,
     isPremium: false,
     emoji: '🌱',
-    accent: '#6C63FF',
+    // Seoul Metro line colours: the city's own wayfinding palette.
+    accent: seoulLines.line2,
   },
   {
     id: 'course-everyday',
@@ -19,7 +21,7 @@ export const COURSES: Course[] = [
     orderIndex: 2,
     isPremium: false,
     emoji: '☕',
-    accent: '#FFB84D',
+    accent: seoulLines.line3,
   },
   {
     id: 'course-conversation',
@@ -29,7 +31,7 @@ export const COURSES: Course[] = [
     orderIndex: 3,
     isPremium: true,
     emoji: '💬',
-    accent: '#FF6B81',
+    accent: seoulLines.line8,
   },
   {
     id: 'course-living',
@@ -39,7 +41,7 @@ export const COURSES: Course[] = [
     orderIndex: 4,
     isPremium: true,
     emoji: '🏙️',
-    accent: '#22B573',
+    accent: seoulLines.line5,
   },
   {
     id: 'course-travel',
@@ -49,7 +51,7 @@ export const COURSES: Course[] = [
     orderIndex: 5,
     isPremium: true,
     emoji: '✈️',
-    accent: '#3AA0FF',
+    accent: seoulLines.line4,
   },
   {
     id: 'course-work',
@@ -59,7 +61,7 @@ export const COURSES: Course[] = [
     orderIndex: 6,
     isPremium: true,
     emoji: '💼',
-    accent: '#8A6BFF',
+    accent: seoulLines.line1,
   },
 ];
 

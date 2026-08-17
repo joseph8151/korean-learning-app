@@ -71,6 +71,26 @@ export const gradients = {
   mint: ['#2BC48A', '#0B7A4A'],
 } as const;
 
+/**
+ * Seoul Metro line colours, used to colour-code courses and categories.
+ *
+ * Anyone who has spent a week in Seoul reads this palette instantly — it is
+ * the colour language of the city's own wayfinding, which is a far more
+ * honest "Korean" signal than a flag or a palace would be. They are used as
+ * fills and accent rules only; text on top always comes from the text ramp.
+ */
+export const seoulLines = {
+  line1: '#0052A4', // 1호선 — navy
+  line2: '#00A84D', // 2호선 — green
+  line3: '#EF7C1C', // 3호선 — orange
+  line4: '#00A5DE', // 4호선 — sky
+  line5: '#996CAC', // 5호선 — purple
+  line6: '#CD7C2F', // 6호선 — brown
+  line7: '#747F00', // 7호선 — olive
+  line8: '#E6186C', // 8호선 — pink
+  line9: '#BB8336', // 9호선 — gold
+} as const;
+
 /** White at these opacities keeps AA on every `gradients` stop above. */
 export const onGradient = {
   primary: '#FFFFFF',

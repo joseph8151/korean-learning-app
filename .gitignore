@@ -56,3 +56,6 @@ yarn-error.*
 # Temporary
 *.tsbuildinfo
 .tmp/
+
+# Source bundle generated for external review (may be large; never commit).
+review-bundle/
