@@ -111,17 +111,21 @@ Support: support@koreango.app
 
 ---
 
-## Graphics — still missing
+## Graphics
 
-These are the real blocker for a good listing, and none of them exist yet.
-The current icon files in `assets/` are placeholders I generated; they are fine
-for a test build and not fine for a store page.
+Regenerate any of these with `npm run assets:brand`. They are produced from
+`scripts/generate-brand-assets.py` rather than exported by hand, so the icon,
+the splash and the store page cannot drift apart.
 
-| Asset | Size | Status |
+| Asset | Size | File |
 | --- | --- | --- |
-| App icon | 512 × 512 PNG, no transparency | **placeholder** |
-| Feature graphic | 1024 × 500 PNG/JPG | **missing** |
-| Phone screenshots | min 2, up to 8 · 16:9 or 9:16, 320–3840 px | **missing** |
+| App icon | 512 × 512 | `store/play-icon-512.png` |
+| Feature graphic | 1024 × 500 | `store/play-feature-graphic-1024x500.png` |
+| Phone screenshots | min 2, up to 8 · 16:9 or 9:16, 320–3840 px | **still needed — take from a device** |
+
+Screenshots have to come off a real phone. They must show the actual app, so
+there is nothing to generate here, and they are the highest-leverage part of
+the page anyway — most people decide from those, not the text.
 
 Screenshots are the highest-leverage thing on the whole page — most people
 decide from those, not the text. Take them from a real device once the build

@@ -20,6 +20,7 @@
     "submit:android": "eas submit --platform android --profile production",
     "seed:generate": "node scripts/generate-seed.mjs",
     "export:review": "node scripts/export-for-review.mjs",
+    "assets:brand": "python3 scripts/generate-brand-assets.py",
     "supabase:types": "supabase gen types typescript --linked > types/database.generated.ts"
   },
   "dependencies": {
