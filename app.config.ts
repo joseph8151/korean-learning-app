@@ -37,10 +37,23 @@ const config: ExpoConfig = {
 
   assetBundlePatterns: ['**/*'],
 
-  // EAS needs this declared up front. It cannot write it itself because this
-  // is a dynamic config (.ts rather than app.json), which is what made the
-  // build fail with "Cannot automatically write to dynamic config".
+  // EAS needs these declared up front. It cannot write them itself because
+  // this is a dynamic config (.ts rather than app.json), which is what made
+  // the build fail with "Cannot automatically write to dynamic config".
   runtimeVersion: { policy: 'appVersion' },
+
+  // Over-the-air updates. `eas.json` gives each build profile a channel, and
+  // expo-updates needs somewhere to look for a matching bundle. With this,
+  // a JavaScript-only fix can ship with `eas update` in minutes instead of
+  // waiting on a store review — native changes still need a new build.
+  //
+  // The runtimeVersion policy above is the safety catch: a build only accepts
+  // updates that declare the same app version, so a JS bundle can never land
+  // on a binary whose native modules do not match it.
+  updates: {
+    url: `https://u.expo.dev/${EAS_PROJECT_ID}`,
+    fallbackToCacheTimeout: 0,
+  },
 
   ios: {
     supportsTablet: true,
