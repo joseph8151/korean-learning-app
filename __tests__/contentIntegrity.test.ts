@@ -9,6 +9,7 @@ import {
   VOCABULARY,
   getDailyPhrase,
 } from '@/constants/content';
+import { LESSON_SPECS } from '@/constants/content/lessonContent';
 
 /**
  * Guards for the bundled content. Hand-written data at this volume drifts:
@@ -128,6 +129,14 @@ describe('course structure', () => {
     const unitIds = new Set(UNITS.map((unit) => unit.id));
     const orphans = LESSONS.filter((lesson) => !unitIds.has(lesson.unitId));
     expect(orphans.map((lesson) => lesson.id)).toEqual([]);
+  });
+
+  it('gives every lesson teaching content, so none opens to an error', () => {
+    // A lesson with no LESSON_SPEC renders no blocks at all, which the lesson
+    // screen can only show as "we couldn't open this lesson".
+    const withContent = new Set(LESSON_SPECS.map((spec) => spec.lessonId));
+    const empty = LESSONS.filter((lesson) => !withContent.has(lesson.id));
+    expect(empty.map((lesson) => lesson.id)).toEqual([]);
   });
 
   it('leaves no unit without lessons, which would render an empty screen', () => {
