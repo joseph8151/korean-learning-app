@@ -32,8 +32,18 @@ upload to Internal testing unlocks the product screens.
 | Free or paid | **Free** |
 
 **"Free" is correct even though the app sells a subscription.** Paid means
-users pay to download. An app with in-app purchases is Free. This choice
-cannot be changed after publishing, so getting it wrong is expensive.
+users pay to download. An app with in-app purchases is Free — Netflix,
+Duolingo and YouTube are all "Free" on the store.
+
+Picking Paid breaks the entire model: no free lessons, no guest mode, no
+paywall, and the Monetize screens demand a merchant account before they will
+even let you set a price.
+
+**If you picked Paid by mistake:** Monetize → App pricing → set to Free (on
+some console versions: Store settings → Pricing & distribution). Google allows
+Paid → Free but never Free → Paid, so this particular mistake is recoverable
+while the reverse is not. Fix it before publishing; the conversion is one-way,
+so you cannot go back to Paid afterwards.
 
 ---
 
