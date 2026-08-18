@@ -61,8 +61,8 @@ const config: ExpoConfig = {
     buildNumber: '1',
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
-      // NSMicrophoneUsageDescription goes back here when speaking practice
-      // actually records audio. See the Android note below.
+      NSMicrophoneUsageDescription:
+        'KoreanGo records your voice so you can play it back next to the native audio and hear the difference. Recordings stay on this device and are deleted when you move on.',
     },
   },
 
@@ -77,14 +77,14 @@ const config: ExpoConfig = {
       monochromeImage: './assets/android-icon-monochrome.png',
       backgroundColor: '#6C63FF',
     },
-    // RECORD_AUDIO is deliberately absent: speaking practice currently measures
-    // only how long you spoke and captures no audio. Declaring an unused
-    // sensitive permission contradicts our privacy policy and invites Play
-    // review questions. Add it back in the same commit that ships real
-    // recording.
     permissions: [
       'VIBRATE',
       'POST_NOTIFICATIONS',
+      // Speaking practice records the learner so they can play their own
+      // attempt back against the native audio. Nothing is uploaded and each
+      // clip is deleted as soon as they move to the next phrase — see
+      // services/recording.ts and the privacy policy.
+      'RECORD_AUDIO',
       // Required by Google Play Billing.
       'com.android.vending.BILLING',
     ],

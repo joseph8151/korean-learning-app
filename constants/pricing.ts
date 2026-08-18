@@ -56,12 +56,11 @@ export const PRICING_PLANS: PricingPlan[] = [
  * What Premium actually unlocks. Every line here has to be checkable against
  * the app, because this is the screen someone reads before paying.
  *
- * An audit removed four claims that were not true: recording your voice (the
- * app records nothing and does not ask for the microphone), TOPIK courses
- * (there are none), progress insights (the Progress tab is free), and
- * unlimited AI conversation (the daily cap applied to paid accounts too).
- * The AI limit is now genuinely higher on Premium, so that one is earned
- * rather than withdrawn.
+ * An audit removed four claims that were not true: TOPIK courses (there are
+ * none), progress insights (the Progress tab is free), unlimited AI
+ * conversation (the daily cap applied to paid accounts too), and recording
+ * your voice. Two of those are now earned rather than withdrawn — the AI limit
+ * really is higher on Premium, and speaking practice really does record.
  */
 export const PREMIUM_BENEFITS = [
   {
@@ -77,7 +76,7 @@ export const PREMIUM_BENEFITS = [
   {
     emoji: '🎙️',
     title: 'Speaking practice',
-    description: 'Listen, say it out loud, and compare against the audio.',
+    description: 'Record yourself and play it back against the native audio. Stays on your phone.',
   },
   {
     emoji: '🧩',

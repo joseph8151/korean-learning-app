@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+
 import { COURSES, CULTURE_ARTICLES, LESSONS, UNITS } from '@/constants/content';
 import { FREE_FEATURES, PREMIUM_BENEFITS, PRICING_PLANS } from '@/constants/pricing';
 
@@ -36,11 +38,28 @@ describe('premium claims match the app', () => {
     }
   });
 
-  it('never promises to record the learner', () => {
-    // The app captures no audio and does not request the microphone, so any
-    // wording implying otherwise is false and a Play review risk.
+  it('only promises recording while the app declares the microphone', () => {
+    // This check used to assert the opposite, because the app did not record.
+    // Now that it does, the pairing that matters is claim <-> permission: a
+    // benefit that mentions recording without RECORD_AUDIO declared is false
+    // advertising, and the permission without the feature invites Play review
+    // questions.
     const text = PREMIUM_BENEFITS.map((b) => `${b.title} ${b.description}`).join(' ');
-    expect(text).not.toMatch(/\brecord(ing|s)?\b/i);
+    const claimsRecording = /\brecord(ing|s)?\b/i.test(text);
+
+    const config = readFileSync('app.config.ts', 'utf8');
+    const declaresMic = config.includes("'RECORD_AUDIO'");
+
+    expect(claimsRecording).toBe(declaresMic);
+  });
+
+  it('says where recordings go, whenever it claims to record', () => {
+    // "We record you" without "it stays on your phone" is the sentence people
+    // refuse to grant the permission over.
+    const speaking = PREMIUM_BENEFITS.find((benefit) => /\brecord/i.test(benefit.description));
+    if (speaking) {
+      expect(speaking.description.toLowerCase()).toMatch(/stays on your phone|never leaves|on-device/);
+    }
   });
 
   it('does not advertise content that does not exist', () => {

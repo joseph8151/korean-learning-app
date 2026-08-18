@@ -44,6 +44,11 @@ const FEATURES = [
     body: 'Cafes, the subway, delivery apps, the office, the clinic. Nothing you would not actually say out loud.',
   },
   {
+    emoji: '🎙️',
+    title: 'Hear yourself against a native speaker',
+    body: 'Record a phrase and play it straight back against the audio. The recording stays on your phone and is deleted when you move on.',
+  },
+  {
     emoji: '🔁',
     title: 'Review timed to forgetting',
     body: 'Words come back just before you lose them, and the ones you keep missing come back sooner.',
