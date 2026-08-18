@@ -72,6 +72,49 @@ function readPurchaseToken(purchase: unknown): string | null {
   return typeof token === 'string' && token.length > 0 ? token : null;
 }
 
+/**
+ * Google Play Billing v5 removed the ability to buy a subscription by product
+ * id alone. Every subscription now has one or more *base plans*, each with
+ * optional *offers* (a free trial is an offer), and the purchase call has to
+ * name exactly which one via its `offerToken`.
+ *
+ * Play only returns offers the account is actually eligible for, so a learner
+ * who already used their trial simply will not see it here. Of what is
+ * offered, take the cheapest first phase — that is the free trial when one is
+ * available, and the plain price when it is not.
+ */
+export function pickSubscriptionOffer(
+  product: unknown,
+): { sku: string; offerToken: string } | null {
+  // `fetchProducts` returns an empty array when the product is not live in
+  // Play Console, so the caller hands us `undefined` — the exact case this
+  // function exists to report, and the one it must not crash on.
+  if (!product || typeof product !== 'object') return null;
+
+  const record = product as Record<string, unknown>;
+  const sku = typeof record.id === 'string' ? record.id : null;
+  const offers = Array.isArray(record.subscriptionOffers)
+    ? (record.subscriptionOffers as Record<string, unknown>[])
+    : [];
+
+  if (!sku || offers.length === 0) return null;
+
+  const firstPhasePrice = (offer: Record<string, unknown>): number => {
+    const phases = (offer.pricingPhasesAndroid as { pricingPhaseList?: unknown[] } | null)
+      ?.pricingPhaseList;
+    const first = Array.isArray(phases) ? (phases[0] as Record<string, unknown>) : null;
+    const micros = first?.priceAmountMicros;
+    const parsed = typeof micros === 'string' ? Number(micros) : Number.NaN;
+    return Number.isFinite(parsed) ? parsed : Number.MAX_SAFE_INTEGER;
+  };
+
+  const best = [...offers]
+    .filter((offer) => typeof offer.offerTokenAndroid === 'string' && offer.offerTokenAndroid)
+    .sort((a, b) => firstPhasePrice(a) - firstPhasePrice(b))[0];
+
+  return best ? { sku, offerToken: best.offerTokenAndroid as string } : null;
+}
+
 function readProductId(purchase: unknown): string | null {
   const record = purchase as unknown as Record<string, unknown>;
   const id = record.productId ?? record.id;
@@ -150,10 +193,32 @@ export const googlePlayPaymentService: PaymentService = {
 
       const isSubscription = plan.id !== 'lifetime';
 
+      // Android needs the offer token, and the only place to get it is the
+      // product listing, so a subscription purchase is always two calls.
+      let subscriptionOffers: { sku: string; offerToken: string }[] | undefined;
+
+      if (isSubscription && Platform.OS === 'android') {
+        const products = await iap.fetchProducts({ skus: [plan.productId], type: 'subs' });
+        const offer = pickSubscriptionOffer((products ?? [])[0]);
+
+        if (!offer) {
+          // Either the product is not live in Play Console yet, or the account
+          // is eligible for nothing — a plain "try again" would be a lie.
+          return {
+            status: 'unavailable',
+            subscription: null,
+            message:
+              'This plan is not available on your account right now. Please try again later or contact support.',
+          };
+        }
+
+        subscriptionOffers = [offer];
+      }
+
       const purchase = await iap.requestPurchase({
         type: isSubscription ? 'subs' : 'in-app',
         request: {
-          google: { skus: [plan.productId] },
+          google: { skus: [plan.productId], ...(subscriptionOffers ? { subscriptionOffers } : {}) },
           apple: { sku: plan.productId },
         },
       });
