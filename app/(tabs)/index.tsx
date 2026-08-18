@@ -1,11 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useCallback } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { SeoulSkyline } from '@/components/decor/SeoulSkyline';
-import { Bouncy, CountUp, Reveal } from '@/components/motion';
+import { Bouncy, CountUp, Reveal, StreakFlame } from '@/components/motion';
 import { DailyKoreanCard } from '@/features/home/DailyKoreanCard';
+import { DailyPlanCard } from '@/features/home/DailyPlanCard';
 import {
   AppText,
   Card,
@@ -15,14 +16,14 @@ import {
   LoadingState,
   ProgressBar,
   Screen,
-  StreakBadge,
 } from '@/components/ui';
 import { colors, onGradient, radius, spacing } from '@/constants/theme';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { useNow } from '@/hooks/useNow';
 import { usePremiumGate } from '@/hooks/usePremium';
+import { buildDailyPlan, type DailyTaskId } from '@/lib/dailyPlan';
 import { greetingForHour } from '@/lib/date';
-import { findNextLesson, goalProgressRatio } from '@/lib/progress';
+import { findNextLesson } from '@/lib/progress';
 import { visibleStreak } from '@/lib/streak';
 import { contentService } from '@/services/content';
 import { selectTodaySeconds, useProgressStore } from '@/store/useProgressStore';
@@ -37,7 +38,7 @@ interface HomeData {
 
 const QUICK_ACTIONS = [
   { emoji: '🔤', label: 'Hangul', tint: colors.primarySoft, href: '/hangul' },
-  { emoji: '🤖', label: 'AI Partner', tint: colors.secondarySoft, href: '/practice/ai-chat' },
+  { emoji: '🤖', label: 'AI Chat', tint: colors.secondarySoft, href: '/practice/ai-chat' },
   { emoji: '🎧', label: 'Listening', tint: colors.accentSoft, href: '/practice/listening' },
   { emoji: '🍜', label: 'Culture', tint: colors.successSoft, href: '/culture' },
 ] as const;
@@ -52,6 +53,9 @@ export default function HomeScreen() {
 
   const lessons = useProgressStore((state) => state.lessons);
   const streak = useProgressStore((state) => state.streak);
+  const totalXp = useProgressStore((state) => state.totalXp);
+  const vocabulary = useProgressStore((state) => state.vocabulary);
+  const activityByDate = useProgressStore((state) => state.activityByDate);
   const savedPhraseIds = useProgressStore((state) => state.savedPhraseIds);
   const toggleSavedPhrase = useProgressStore((state) => state.toggleSavedPhrase);
   const todaySeconds = useProgressStore(selectTodaySeconds);
@@ -91,12 +95,36 @@ export default function HomeScreen() {
 
   const next = findNextLesson(data.units, data.lessonsByUnit, lessons);
   const todayMinutes = Math.floor(todaySeconds / 60);
-  const goalRatio = goalProgressRatio(todayMinutes, dailyGoalMinutes);
-  const goalMet = goalRatio >= 1;
   const days = visibleStreak(streak);
+
+  const plan = buildDailyPlan({
+    activityByDate,
+    vocabulary,
+    savedPhraseIds,
+    todaysPhraseId: data.phrase.id,
+    now,
+  });
+
+  // How far through the current unit the learner is, which is more meaningful
+  // on the hero than a percentage of the whole course.
+  const unitLessons = next ? (data.lessonsByUnit[next.unit.id] ?? []) : [];
+  const unitDone = unitLessons.filter((lesson) => lessons[lesson.id]?.status === 'completed').length;
 
   const openLesson = (lesson: Lesson) =>
     guard(lesson.isPremium, () => router.push(`/lesson/${lesson.id}`));
+
+  const openTask = (task: DailyTaskId) => {
+    if (task === 'lesson') {
+      if (next) openLesson(next.lesson);
+      else router.push('/practice/quick-quiz');
+      return;
+    }
+    if (task === 'review') {
+      router.push('/practice/vocabulary');
+      return;
+    }
+    router.push('/daily');
+  };
 
   return (
     <Screen>
@@ -106,43 +134,81 @@ export default function HomeScreen() {
             {greetingForHour(now.getHours()).toUpperCase()}
           </AppText>
           <AppText variant="title" numberOfLines={1}>
-            {displayName} 👋
+            {displayName}
           </AppText>
         </View>
 
-        <Pressable
+        <Bouncy
           onPress={() => router.push('/search')}
-          accessibilityRole="button"
+          scaleTo={0.9}
           accessibilityLabel="Search lessons, words and phrases"
-          style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
           hitSlop={8}
+          style={styles.iconButton}
         >
           <Ionicons name="search" size={21} color={colors.text} />
-        </Pressable>
+        </Bouncy>
       </View>
 
+      {/* Streak, XP and minutes as a compact strip rather than a whole card —
+          they are reference numbers, not the point of the screen. */}
       <Reveal index={0}>
+        <View style={styles.stats}>
+          <StatPill
+            icon={<StreakFlame active={days > 0} size={14} />}
+            value={`${days}`}
+            label={days === 1 ? 'day' : 'days'}
+          />
+          <View style={styles.statDivider} />
+          <StatPill
+            icon={<Ionicons name="flash" size={14} color={colors.warningDeep} />}
+            value={<CountUp value={totalXp} variant="bodyStrong" duration={800} />}
+            label="XP"
+          />
+          <View style={styles.statDivider} />
+          <StatPill
+            icon={<Ionicons name="time-outline" size={14} color={colors.primaryDeep} />}
+            value={`${todayMinutes}/${dailyGoalMinutes}`}
+            label="min"
+          />
+        </View>
+      </Reveal>
+
+      <Reveal index={1}>
         {next ? (
           <GradientCard
             style={styles.hero}
             contentStyle={styles.heroContent}
             decoration={<SeoulSkyline />}
             onPress={() => openLesson(next.lesson)}
-            accessibilityLabel={`Today's lesson: ${next.lesson.title}, ${next.unit.title}, ${next.lesson.estimatedMinutes} minutes`}
+            accessibilityLabel={`Next lesson: ${next.lesson.title}, ${next.unit.title}, lesson ${unitDone + 1} of ${unitLessons.length}`}
             accessibilityHint="Opens the lesson"
           >
             <AppText variant="overline" color={onGradient.secondary}>
-              TODAY&apos;S LESSON
+              {unitLessons.length > 0
+                ? `${next.unit.title.toUpperCase()} · ${unitDone + 1}/${unitLessons.length}`
+                : next.unit.title.toUpperCase()}
             </AppText>
             <AppText variant="title" color={onGradient.primary} style={styles.heroTitle}>
               {next.lesson.title}
             </AppText>
             <AppText variant="caption" color={onGradient.secondary}>
-              {next.unit.title} · {next.lesson.estimatedMinutes} min
+              {next.lesson.description}
             </AppText>
 
+            {unitLessons.length > 0 ? (
+              <View style={styles.heroProgress}>
+                <ProgressBar
+                  ratio={unitDone / unitLessons.length}
+                  color={colors.white}
+                  trackColor="rgba(255,255,255,0.28)"
+                  height={6}
+                  accessibilityLabel={`Unit progress: ${unitDone} of ${unitLessons.length} lessons`}
+                />
+              </View>
+            ) : null}
+
             <ChunkyButton
-              label="Start Lesson"
+              label={unitDone > 0 ? 'Continue' : 'Start Lesson'}
               tone="surface"
               style={styles.heroButton}
               onPress={() => openLesson(next.lesson)}
@@ -164,46 +230,13 @@ export default function HomeScreen() {
         )}
       </Reveal>
 
-      <Reveal index={1}>
-        <Card style={styles.goalCard}>
-          <View style={styles.goalHeader}>
-            <View style={styles.goalHeaderText}>
-              <AppText variant="overline" color={colors.textSubtle}>
-                DAILY GOAL
-              </AppText>
-              <View style={styles.goalNumbers}>
-                <CountUp value={todayMinutes} variant="title" duration={700} />
-                <AppText variant="caption" color={colors.textMuted} style={styles.goalUnit}>
-                  / {dailyGoalMinutes} min
-                </AppText>
-              </View>
-            </View>
-            <StreakBadge days={days} />
-          </View>
-
-          <ProgressBar
-            ratio={goalRatio}
-            color={goalMet ? colors.success : colors.primary}
-            trackColor={goalMet ? colors.successSoft : colors.primarySoft}
-            accessibilityLabel={`Daily goal ${todayMinutes} of ${dailyGoalMinutes} minutes`}
-          />
-
-          <View style={styles.goalHint}>
-            <Ionicons
-              name={goalMet ? 'checkmark-circle' : 'time-outline'}
-              size={15}
-              color={goalMet ? colors.successDeep : colors.textSubtle}
-            />
-            <AppText variant="caption" color={goalMet ? colors.successDeep : colors.textMuted}>
-              {goalMet
-                ? 'Goal complete. Anything else today is a bonus.'
-                : `${Math.max(dailyGoalMinutes - todayMinutes, 0)} minutes to go.`}
-            </AppText>
-          </View>
-        </Card>
+      <Reveal index={2}>
+        <View style={styles.section}>
+          <DailyPlanCard plan={plan} onOpen={openTask} />
+        </View>
       </Reveal>
 
-      <Reveal index={2}>
+      <Reveal index={3}>
         <View style={styles.quickRow}>
           {QUICK_ACTIONS.map((action) => (
             <QuickAction
@@ -217,7 +250,7 @@ export default function HomeScreen() {
         </View>
       </Reveal>
 
-      <Reveal index={3}>
+      <Reveal index={4}>
         <View style={styles.section}>
           <DailyKoreanCard
             phrase={data.phrase}
@@ -228,6 +261,28 @@ export default function HomeScreen() {
         </View>
       </Reveal>
     </Screen>
+  );
+}
+
+function StatPill({
+  icon,
+  value,
+  label,
+}: {
+  icon: React.ReactNode;
+  value: React.ReactNode;
+  label: string;
+}) {
+  return (
+    <View style={styles.stat}>
+      {icon}
+      <View style={styles.statText}>
+        {typeof value === 'string' ? <AppText variant="bodyStrong">{value}</AppText> : value}
+        <AppText variant="micro" color={colors.textSubtle}>
+          {label}
+        </AppText>
+      </View>
+    </View>
   );
 }
 
@@ -279,29 +334,35 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  hero: { marginTop: spacing.xl },
-  // Extra bottom room so the skyline sits under the button rather than
-  // behind it.
+
+  stats: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.surface,
+    borderRadius: radius.md,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.borderSoft,
+    paddingVertical: spacing.md,
+    marginTop: spacing.lg,
+  },
+  stat: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+  },
+  statText: { alignItems: 'flex-start' },
+  statDivider: { width: StyleSheet.hairlineWidth, height: 28, backgroundColor: colors.border },
+
+  hero: { marginTop: spacing.lg },
   heroContent: { paddingBottom: spacing.xxl },
   heroTitle: { marginTop: spacing.xs, marginBottom: spacing.xs },
-  heroButton: { marginTop: spacing.xl },
-  goalCard: { marginTop: spacing.lg },
-  goalHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: spacing.md,
-    marginBottom: spacing.lg,
-  },
-  goalHeaderText: { flex: 1, gap: spacing.xs },
-  goalNumbers: { flexDirection: 'row', alignItems: 'baseline', gap: spacing.xs },
-  goalUnit: { paddingBottom: 2 },
-  goalHint: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    marginTop: spacing.md,
-  },
+  heroProgress: { marginTop: spacing.lg },
+  heroButton: { marginTop: spacing.lg },
+
+  section: { marginTop: spacing.lg },
+
   quickRow: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.lg },
   quickAction: {
     flex: 1,
@@ -323,6 +384,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  pressed: { opacity: 0.9, transform: [{ scale: 0.985 }] },
-  section: { marginTop: spacing.lg },
 });
