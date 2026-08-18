@@ -21,6 +21,7 @@
     "seed:generate": "node scripts/generate-seed.mjs",
     "export:review": "node scripts/export-for-review.mjs",
     "assets:brand": "python3 scripts/generate-brand-assets.py",
+    "schema:build": "bash scripts/build-schema.sh",
     "supabase:types": "supabase gen types typescript --linked > types/database.generated.ts"
   },
   "dependencies": {

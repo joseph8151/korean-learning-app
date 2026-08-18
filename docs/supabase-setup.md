@@ -39,15 +39,18 @@ Korean-first audience even though the learners are worldwide.
 
 ## Step 2 — Run the migrations
 
-SQL Editor → New query. Run these **in order**, one at a time, checking each
-succeeds before the next — later files depend on earlier ones.
+SQL Editor → New query. Paste **`supabase/schema.sql`** — all four migrations
+concatenated in order, so there is one copy-paste instead of four chances to
+run them out of sequence. Regenerate it with `npm run schema:build` after
+changing any migration.
 
-1. `supabase/migrations/20260101000000_initial_schema.sql`
-2. `supabase/migrations/20260102000000_add_sync_extras.sql`
-3. `supabase/migrations/20260103000000_ai_usage_limits.sql`
-4. `supabase/migrations/20260104000000_play_billing.sql`
+15 tables, Row Level Security on every one.
 
-Paste the whole file each time. 15 tables, Row Level Security on every one.
+Run it **once**, on a fresh project. It is not re-runnable: these are
+migrations, so everything is a plain `create` and a second run fails on the
+first object that already exists. If a run half-succeeds, reset the database
+(Project Settings → General → Reset database) and run it again from clean
+rather than picking through the errors.
 
 Check it worked: Table Editor should list `profiles`, `progress`,
 `subscriptions`, `purchases` among others, and Authentication → Policies
