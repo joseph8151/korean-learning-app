@@ -251,6 +251,27 @@ export default function HomeScreen() {
       </Reveal>
 
       <Reveal index={4}>
+        <Bouncy
+          onPress={() => router.push('/about')}
+          scaleTo={0.98}
+          accessibilityLabel="What is inside KoreanGo"
+          accessibilityHint="Opens the overview of courses, review and pacing"
+          style={styles.aboutRow}
+        >
+          <View style={styles.aboutIcon}>
+            <AppText variant="subheading">📚</AppText>
+          </View>
+          <View style={styles.aboutText}>
+            <AppText variant="bodyStrong">What&apos;s inside KoreanGo</AppText>
+            <AppText variant="micro" color={colors.textMuted}>
+              Courses, review, AI practice — and how long it takes
+            </AppText>
+          </View>
+          <Ionicons name="chevron-forward" size={18} color={colors.textFaint} />
+        </Bouncy>
+      </Reveal>
+
+      <Reveal index={5}>
         <View style={styles.section}>
           <DailyKoreanCard
             phrase={data.phrase}
@@ -384,4 +405,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+
+  aboutRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.lg,
+    backgroundColor: colors.primaryTint,
+    borderRadius: radius.md,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.primarySoft,
+    padding: spacing.lg,
+    marginTop: spacing.lg,
+    minHeight: 76,
+  },
+  aboutIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: radius.sm,
+    backgroundColor: colors.surface,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  aboutText: { flex: 1, gap: 2 },
 });

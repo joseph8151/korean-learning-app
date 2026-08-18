@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Pressable, StyleSheet, View, type ViewStyle } from 'react-native';
+import { Pressable, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import { colors, radius, shadow, spacing } from '@/constants/theme';
 
@@ -8,7 +8,7 @@ export type CardTone = 'raised' | 'flat' | 'tinted';
 export interface CardProps {
   children: ReactNode;
   onPress?: () => void;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
   padded?: boolean;
   /**
    * `raised` is the default white card. `flat` drops the shadow for cards

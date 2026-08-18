@@ -169,6 +169,7 @@ export default function ProfileScreen() {
       </Section>
 
       <Section title="About">
+        <Row label="What's inside KoreanGo" value="" onPress={() => router.push('/about')} />
         <Row label="Privacy Policy" value="" onPress={() => Linking.openURL(PRIVACY_URL)} />
         <Row label="Terms" value="" onPress={() => Linking.openURL(TERMS_URL)} />
         <Row label="Contact" value={SUPPORT_EMAIL} onPress={() => Linking.openURL(`mailto:${SUPPORT_EMAIL}`)} />
