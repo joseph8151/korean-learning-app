@@ -165,8 +165,8 @@ export default function AboutScreen() {
         <View style={styles.section}>
           <AppText variant="title">Pick your pace</AppText>
           <AppText variant="caption" color={colors.textMuted} style={styles.paceIntro}>
-            Same courses either way — the pace just sets your daily goal and
-            when the lessons run out.
+            Same courses either way. The pace sets your daily goal — it is a
+            commitment, not a different product.
           </AppText>
 
           <View style={styles.paces}>
@@ -175,6 +175,8 @@ export default function AboutScreen() {
                 pace.minutesPerDay,
                 data.lessonMinutes,
                 data.lessons,
+                new Date(),
+                pace.months,
               );
               const current = dailyGoalMinutes === pace.minutesPerDay;
 
@@ -205,17 +207,24 @@ export default function AboutScreen() {
                   <View style={styles.paceFacts}>
                     <PaceFact value={`${pace.minutesPerDay} min`} label="a day" />
                     <PaceFact value={`${finish.lessonsPerDay}`} label="lessons a day" />
-                    <PaceFact value={`${Math.round(finish.days / 7)}`} label="weeks of lessons" />
+                    <PaceFact value={`${finish.lessonWeeks}`} label="weeks of lessons" />
                   </View>
                 </Card>
               );
             })}
           </View>
 
-          <AppText variant="micro" color={colors.textSubtle} style={styles.paceNote}>
-            That is when new lessons run out. Review, practice and AI
-            conversations carry on for as long as you want them.
-          </AppText>
+          <Card tone="tinted" style={styles.paceNote}>
+            <AppText variant="bodyStrong">After the lessons run out</AppText>
+            <AppText variant="caption" color={colors.textMuted}>
+              There are about {Math.round(data.lessonMinutes / 60)} hours of
+              lessons today, so at any pace you will reach the end of the new
+              material before your plan is up. What carries on is spaced review
+              of every word you have met, quizzes, listening, speaking and
+              unlimited AI conversation — which is the part that actually makes
+              Korean stick. New lessons are added over time.
+            </AppText>
+          </Card>
         </View>
       </Reveal>
 

@@ -52,19 +52,55 @@ export const PRICING_PLANS: PricingPlan[] = [
   },
 ];
 
+/**
+ * What Premium actually unlocks. Every line here has to be checkable against
+ * the app, because this is the screen someone reads before paying.
+ *
+ * An audit removed four claims that were not true: recording your voice (the
+ * app records nothing and does not ask for the microphone), TOPIK courses
+ * (there are none), progress insights (the Progress tab is free), and
+ * unlimited AI conversation (the daily cap applied to paid accounts too).
+ * The AI limit is now genuinely higher on Premium, so that one is earned
+ * rather than withdrawn.
+ */
 export const PREMIUM_BENEFITS = [
-  { emoji: '📚', title: 'Unlimited lessons', description: 'Every course, every unit, no daily caps.' },
-  { emoji: '🤖', title: 'AI Korean conversations', description: 'Practise real situations any time.' },
-  { emoji: '🎙️', title: 'Speaking practice', description: 'Repeat, record and compare your Korean.' },
-  { emoji: '🔁', title: 'Vocabulary review', description: 'Smart spaced review of what you forget.' },
-  { emoji: '🎧', title: 'Advanced Korean courses', description: 'Business, TOPIK and native listening.' },
-  { emoji: '📈', title: 'Progress insights', description: 'See exactly what is improving each week.' },
+  {
+    emoji: '📚',
+    title: '52 more lessons',
+    description: 'Conversation, Living in Korea, Travel and Work — four full courses.',
+  },
+  {
+    emoji: '🤖',
+    title: '10× the AI practice',
+    description: '100 messages a day with your conversation partner instead of 10.',
+  },
+  {
+    emoji: '🎙️',
+    title: 'Speaking practice',
+    description: 'Listen, say it out loud, and compare against the audio.',
+  },
+  {
+    emoji: '🧩',
+    title: 'Grammar practice',
+    description: 'The patterns behind the sentences, drilled until they stick.',
+  },
+  {
+    emoji: '🍜',
+    title: 'All culture articles',
+    description: 'Nunchi, drinking etiquette, KakaoTalk, noraebang and more.',
+  },
+  {
+    emoji: '💬',
+    title: 'Every AI situation',
+    description: 'Clinics, apartment viewings, hair salons and job interviews.',
+  },
 ];
 
+/** What a learner keeps without paying. Also checked against the app. */
 export const FREE_FEATURES = [
-  'Daily lessons',
-  'Basic vocabulary',
-  'Limited quizzes',
-  'Daily Korean phrase',
-  'Basic progress',
+  'The full Hangul trainer',
+  'Korean Starter and Everyday Korean — 32 lessons',
+  'Unlimited quizzes, listening and review',
+  'A new Korean phrase every day',
+  'Streaks, XP and the whole Progress tab',
 ];

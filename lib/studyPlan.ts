@@ -12,12 +12,18 @@ export interface StudyPace {
 
 /**
  * Three commitments, not three products. Everyone gets the same courses; the
- * pace decides the daily goal and the date the courses run out.
+ * pace only decides the daily goal.
  *
- * The minute figures are chosen so the arithmetic below lands near the stated
- * month count for the current library — see `estimateFinish`. They are not
- * marketing numbers, and if the content grows the estimate moves rather than
- * the promise.
+ * The month figure is the length of the commitment a learner is making, NOT a
+ * promise about how long the lessons last. Those are different numbers and
+ * conflating them is how an app ends up overselling: the current library is
+ * about nine hours, so lessons run out well before twelve months even at five
+ * minutes a day. What fills the rest is review, practice and conversation,
+ * which is also how language learning actually works — but the UI has to say
+ * that rather than imply a year of new material.
+ *
+ * `lessonWeeks` in `estimateFinish` is the honest number, and the About screen
+ * shows it plainly next to the commitment.
  */
 export const STUDY_PACES: StudyPace[] = [
   {
@@ -50,6 +56,14 @@ export interface FinishEstimate {
   date: Date;
   /** Lessons per study day, rounded for display. */
   lessonsPerDay: number;
+  /** Whole weeks of new material. What the About screen shows. */
+  lessonWeeks: number;
+  /**
+   * True when new lessons run out well before the commitment ends, which is
+   * the normal state for a young library. The UI uses this to say what happens
+   * next instead of leaving a learner to discover it.
+   */
+  runsOutEarly: boolean;
 }
 
 /**
@@ -64,6 +78,7 @@ export function estimateFinish(
   totalLessonMinutes: number,
   lessonCount: number,
   from: Date = new Date(),
+  commitmentMonths?: number,
 ): FinishEstimate {
   const safeMinutes = Math.max(1, minutesPerDay);
   const days = Math.max(1, Math.ceil(totalLessonMinutes / safeMinutes));
@@ -73,6 +88,8 @@ export function estimateFinish(
     days,
     date: addDays(from, days),
     lessonsPerDay: Math.max(1, Math.round(safeMinutes / Math.max(1, averageLesson))),
+    lessonWeeks: Math.max(1, Math.round(days / 7)),
+    runsOutEarly: commitmentMonths !== undefined && days < commitmentMonths * 30 * 0.75,
   };
 }
 

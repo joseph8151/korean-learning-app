@@ -343,7 +343,7 @@ export const LESSONS: Lesson[] = [
     lessonType: 'conversation',
     estimatedMinutes: 6,
     orderIndex: 2,
-    isPremium: true,
+    isPremium: false,
   },
   {
     id: 'lesson-shopping-sizes',
@@ -353,7 +353,7 @@ export const LESSONS: Lesson[] = [
     lessonType: 'vocabulary',
     estimatedMinutes: 6,
     orderIndex: 1,
-    isPremium: true,
+    isPremium: false,
   },
   {
     id: 'lesson-conversation-smalltalk',

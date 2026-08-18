@@ -27,7 +27,40 @@ const MAX_HISTORY = 20;
  * `consume_ai_message`, which only the service role may call, so a user cannot
  * reset their own quota.
  */
-const DAILY_MESSAGE_LIMIT = Number(Deno.env.get('AI_DAILY_MESSAGE_LIMIT') ?? '50');
+const FREE_DAILY_MESSAGE_LIMIT = Number(Deno.env.get('AI_DAILY_MESSAGE_LIMIT_FREE') ?? '10');
+const PREMIUM_DAILY_MESSAGE_LIMIT = Number(
+  Deno.env.get('AI_DAILY_MESSAGE_LIMIT_PREMIUM') ?? '100',
+);
+
+/** Statuses that still carry access. `cancelled` means auto-renew is off, not
+ *  that the period has ended — mirrors `isEntitled` in the app. */
+const ENTITLED_STATUSES = ['active', 'trialing', 'cancelled'];
+
+/**
+ * Whether this user is on a paid plan, read server-side with the service role.
+ *
+ * The client is never asked: a device that could name its own limit could give
+ * itself unlimited conversation, and every message here costs real money at
+ * the model provider.
+ */
+async function isPremium(
+  admin: ReturnType<typeof createClient>,
+  userId: string,
+): Promise<boolean> {
+  const { data, error } = await admin
+    .from('subscriptions')
+    .select('plan, status, expires_at')
+    .eq('user_id', userId)
+    .maybeSingle();
+
+  if (error || !data) return false;
+  if (data.plan === 'free') return false;
+  if (!ENTITLED_STATUSES.includes(data.status)) return false;
+  if (data.plan === 'lifetime') return true;
+  if (!data.expires_at) return false;
+
+  return new Date(data.expires_at).getTime() > Date.now();
+}
 
 const SITUATION_BRIEFS: Record<string, string> = {
   cafe: 'You are a barista in a Seoul cafe taking a drink order.',
@@ -96,9 +129,12 @@ Deno.serve(async (request: Request) => {
   const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
   if (serviceRoleKey) {
     const admin = createClient(Deno.env.get('SUPABASE_URL') ?? '', serviceRoleKey);
+    const premium = await isPremium(admin, userData.user.id);
+    const limit = premium ? PREMIUM_DAILY_MESSAGE_LIMIT : FREE_DAILY_MESSAGE_LIMIT;
+
     const { data: quota, error: quotaError } = await admin.rpc('consume_ai_message', {
       p_user_id: userData.user.id,
-      p_limit: DAILY_MESSAGE_LIMIT,
+      p_limit: limit,
     });
 
     if (quotaError) {
@@ -110,8 +146,11 @@ Deno.serve(async (request: Request) => {
     if (row && row.allowed === false) {
       return json(
         {
-          error: "You've reached today's practice limit. Come back tomorrow!",
+          error: premium
+            ? "You've reached today's practice limit. Come back tomorrow!"
+            : "That's today's free practice. Premium raises the limit, or come back tomorrow.",
           remaining: 0,
+          premium,
         },
         429,
       );
