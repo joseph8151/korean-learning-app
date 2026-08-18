@@ -1,6 +1,13 @@
 import type { Quiz } from '@/types/content';
+import { LESSON_SPECS } from './lessonContent';
+import { generateMissingQuizzes } from './quizGeneration';
 
-export const QUIZZES: Quiz[] = [
+/**
+ * Hand-written questions. These can ask about nuance a generator cannot see —
+ * why 안녕히 가세요 and 안녕히 계세요 differ, whether 테이크아웃 means staying
+ * or going — so any lesson listed here keeps its own set.
+ */
+const HAND_WRITTEN: Quiz[] = [
   { id: 'q-hello-1', lessonId: 'lesson-greetings-hello', questionType: 'multiple_choice_ko_en', question: 'What does 안녕하세요 mean?', prompt: '안녕하세요', correctAnswer: 'Hello', options: ['Hello', 'Thank you', 'Goodbye', 'Sorry'], metadata: null },
   { id: 'q-hello-2', lessonId: 'lesson-greetings-hello', questionType: 'multiple_choice_en_ko', question: 'How do you say goodbye to someone who is leaving?', prompt: null, correctAnswer: '안녕히 가세요', options: ['안녕히 가세요', '안녕히 계세요', '감사합니다', '반가워요'], metadata: null },
   { id: 'q-hello-3', lessonId: 'lesson-greetings-hello', questionType: 'true_false', question: '안녕하세요 can be used in the morning and the evening.', prompt: null, correctAnswer: 'True', options: ['True', 'False'], metadata: null },
@@ -77,4 +84,14 @@ export const QUIZZES: Quiz[] = [
   { id: 'q-email-1', lessonId: 'lesson-work-email', questionType: 'multiple_choice_ko_en', question: 'What does 확인 부탁드립니다 mean?', prompt: '확인 부탁드립니다.', correctAnswer: 'Please kindly confirm', options: ['Please kindly confirm', 'Thank you for your work', 'I will send it later', 'Please call me'], metadata: null },
   { id: 'q-email-2', lessonId: 'lesson-work-email', questionType: 'word_matching', question: 'Match the Korean to its meaning.', prompt: null, correctAnswer: '일정', options: ['일정', '확인', '자료', '회의'], metadata: { matchTarget: 'Schedule' } },
   { id: 'q-email-3', lessonId: 'lesson-work-email', questionType: 'true_false', question: '~드립니다 is a humble ending that makes writing sound polite.', prompt: null, correctAnswer: 'True', options: ['True', 'False'], metadata: null },
+];
+
+/**
+ * Every lesson without hand-written questions gets a set derived from its own
+ * content. Without this, adding a lesson means adding four questions by hand,
+ * which is how content stops getting added.
+ */
+export const QUIZZES: Quiz[] = [
+  ...HAND_WRITTEN,
+  ...generateMissingQuizzes(LESSON_SPECS, HAND_WRITTEN),
 ];
