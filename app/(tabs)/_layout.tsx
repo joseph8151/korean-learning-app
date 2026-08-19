@@ -1,9 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import { StyleSheet, View, type ColorValue } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { colors, layout, radius, typography } from '@/constants/theme';
+import { tabBarStyle } from '@/constants/tabBar';
+import { colors, radius, typography } from '@/constants/theme';
 
 type IconName = keyof typeof Ionicons.glyphMap;
 
@@ -29,31 +29,18 @@ function tabIcon(focused: IconName, unfocused: IconName) {
 }
 
 export default function TabsLayout() {
-  const insets = useSafeAreaInsets();
-
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: colors.primaryDeep,
         tabBarInactiveTintColor: colors.textSubtle,
-        tabBarStyle: {
-          backgroundColor: colors.surface,
-          borderTopColor: colors.borderSoft,
-          borderTopWidth: StyleSheet.hairlineWidth,
-          // Add the device's bottom inset explicitly. Setting an explicit
-          // height overrides React Navigation's own inset handling, so without
-          // this the labels sit underneath the Android gesture bar.
-          height: layout.tabBarHeight + insets.bottom,
-          paddingBottom: insets.bottom + 6,
-          paddingTop: 8,
-        },
+        tabBarStyle,
         tabBarLabelStyle: {
           fontSize: typography.micro.fontSize,
           fontWeight: '700',
-          marginTop: 2,
         },
-        tabBarItemStyle: { paddingTop: 2 },
+        tabBarIconStyle: { marginTop: 2 },
       }}
     >
       <Tabs.Screen

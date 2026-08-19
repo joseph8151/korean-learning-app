@@ -200,8 +200,6 @@ export const layout = {
   screenPadding: spacing.xl,
   minTouchTarget: 48,
   maxContentWidth: 640,
-  /** Height of the tab bar excluding the device's bottom safe-area inset. */
-  tabBarHeight: 60,
 } as const;
 
 export type ThemeColor = keyof typeof colors;
